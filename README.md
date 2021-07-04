@@ -8,7 +8,7 @@ This course provides a short introduction to machine learning. It covers:
 The course consists of a lecture and a number of problem sets. You are free to take whichever of the below seems most appealing to you:
 
 - unsupervised learning:
-  - [*Clustering via k-means*](./problem_sheets/s_clustering_problems.nb.html). Here, participants code up their own clustering algorithm using the k-means method.
+  - [*Clustering via k-means*](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/s_clustering_problems.nb.html). Here, participants code up their own clustering algorithm using the k-means method.
 - supervised learning:
   - *K-nearest-neighbour regression*. Here, participants code up their own KNN regression model
   - *Linear regression*. Here, participants train their own linear regression model
