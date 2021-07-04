@@ -3,13 +3,6 @@ title: "Supervised ML problems"
 output: html_notebook
 ---
 
-```{r}
-rm(list=ls())
-library(tidyverse)
-library(reshape2)
-library(e1071)
-```
-
 # KNN regression
 
 1. Generate $n=200$ paired $(x_i, y_i)$ data points by sampling:
@@ -24,9 +17,14 @@ and then:
 y_i \sim \mathcal{N}(sin(x_i), 0.2)
 \end{equation}
 
+Visualise your samples.
 ```{r}
-library(RANN)
+rm(list=ls())
 library(tidyverse)
+library(reshape2)
+library(e1071)
+library(RANN)
+
 n <- 200
 x <- rnorm(n, 0, 4)
 y <- sin(x) + rnorm(n, 0, 0.2)
@@ -37,6 +35,46 @@ df <- tibble(x, y) %>%
 ggplot(df %>% filter(type=="actual"), aes(x=x, y=y)) +
   geom_point()
 ```
+
+2. Write a function that returns the Euclidean distance of each point from each other point.
+
+Note: both R and Python have functions for calculating distance matrices:
+- R: `dist`
+- Python: `scipy.spatial.distance_matrix`
+
+```{r}
+distance <- function(df) {
+  d <- as.matrix(dist(df[1:5, 1:2]))
+  diag(d) <- Inf
+  d
+}
+```
+
+3. Write a function which returns the mean of the K-nearest neighbour points for all points (excluding itself of course). This is your KNN regression function.
+```{r}
+knn <- function(k, df) {
+  d <- distance(df)
+  
+  # Get indices of knn for each point
+  m_indices <- matrix(nrow = nrow(df),
+                      ncol = k)
+  for(i in 1:nrow(d)) {
+    low_to_high_indices <- order(d[i, ])
+    m_indices[i, ] <- low_to_high_indices[1:k]
+  }
+  
+  # Get KNN points for each point
+  x <- df[, 1:2]
+  v_means <- vector(length=nrow(df))
+  for(i in seq_along(v_means)) {
+    points <- x[m_indices[i, ], ]
+    v_means[i] <- colMeans(points)
+  }
+  v_means
+}
+
+```
+
 
 2. Create a function which returns the KNNs for a given $x$ value (and $k$)
 ```{r}
