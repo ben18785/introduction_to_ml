@@ -226,49 +226,107 @@ summary {
 
 
 <!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdD1scygpKVxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KHJlc2hhcGUyKVxuYGBgIn0= -->
-<pre class="r"><code>rm(list=ls())
-library(tidyverse)
-library(reshape2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
+<p>In this problem set, we are going to write our own k-means clustering algorithm. The dataset we are going to use is the famous (Fisher’s or Anderson’s) iris data set, which gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, versicolor, and virginica.</p>
 <ol style="list-style-type: decimal">
-<li>Load the iris data. Write a k-means algorithm from scratch and use it to cluster the points assuming 3 clusters. Use the Euclidean distance metric.</li>
+<li>Load the iris data and examine the data. Here we are not going to use numerical data on sepal length, sepal width, petal length and petal width to cluster the specimens.</li>
 </ol>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBpcmlzICU+JSBcbiAgc2VsZWN0KC1TcGVjaWVzKVxuIyBjaG9vc2UgbnVtYmVyIG9mIGNsdXN0ZXJzLCBrXG5mX2Nob29zZV9yYW5kb21fY2VudHJvaWRzIDwtIGZ1bmN0aW9uKHgsIGs9Mykge1xuICBpZHhzIDwtIDE6bnJvdyh4KVxuICBpZHhzIDwtIHNhbXBsZShpZHhzLCBrKVxuICByZXR1cm4oeFtpZHhzLCBdKVxufVxuIyBhc3NpZ24gcG9pbnRzIHRvIG5lYXJlc3QgY2VudHJvaWRcbmZfZXVjbF9kaXN0IDwtIGZ1bmN0aW9uKHgxLCB4Mikge3JldHVybihzcXJ0KHN1bSgoeDEgLSB4MileMikpKX1cbmZfZXVjbF9kaXN0X2FsbCA8LSBmdW5jdGlvbih4LCBjZW50cm9pZCkge1xuICByZXR1cm4obWFwX2RibChzZXEoMSwgbnJvdyh4KSwgMSksIH5mX2V1Y2xfZGlzdChjZW50cm9pZCwgeFsuLCBdKSkpXG59XG5mX2V1Y2xfZGlzdF9jZW50cm9pZHMgPC0gZnVuY3Rpb24oeCwgY2VudHJvaWRzKSB7XG4gIG1fZGlzdCA8LSBtYXRyaXgobnJvdyA9IG5yb3coeCksIG5jb2wgPSBucm93KGNlbnRyb2lkcykpXG4gIGZvcihpIGluIDE6bnJvdyhjZW50cm9pZHMpKVxuICAgIG1fZGlzdFssIGldIDwtIGZfZXVjbF9kaXN0X2FsbCh4LCBjZW50cm9pZHNbaSwgXSlcbiAgcmV0dXJuKG1fZGlzdClcbn1cbmZfY2x1c3RlciA8LSBmdW5jdGlvbih4LCBjZW50cm9pZHMpIHtcbiAgbV9kaXN0IDwtIGZfZXVjbF9kaXN0X2NlbnRyb2lkcyh4LCBjZW50cm9pZHMpXG4gIGNsdXN0ZXJfaWQgPC0gdmVjdG9yKGxlbmd0aCA9IG5yb3cobV9kaXN0KSlcbiAgZm9yKGkgaW4gc2VxX2Fsb25nKGNsdXN0ZXJfaWQpKVxuICAgIGNsdXN0ZXJfaWRbaV0gPC0gd2hpY2gubWluKG1fZGlzdFtpLCBdKVxuICByZXR1cm4oY2x1c3Rlcl9pZClcbn1cbiMgcmVjYWxjdWxhdGUgY2VudHJvaWRzIGJhc2VkIG9uIGNsdXN0ZXJzXG5mX3JlY2FsY3VsYXRlX2NlbnRyb2lkcyA8LSBmdW5jdGlvbihjbHVzdGVyX2lkcywgeCkge1xuICBkZiA8LSB4ICU+JSBcbiAgICBhcy5kYXRhLmZyYW1lKCkgJT4lIFxuICAgIG11dGF0ZShjbHVzdGVyPWNsdXN0ZXJfaWRzKVxuICBtdSA8LSBkZiAlPiUgXG4gICAgZ3JvdXBfYnkoY2x1c3RlcikgJT4lIFxuICAgIHN1bW1hcmlzZV9hbGwoLmZ1bnM9bWVhbikgJT4lIFxuICAgIHNlbGVjdCgtY2x1c3RlcilcbiAgcmV0dXJuKG11KSAgXG59XG4jIGhlcmUgSSBqdXN0IHVzZSA1MCBpdGVyYXRpb25zIGFzIGEgc3RvcHBpbmcgY3JpdGVyaWFcbiMgYmV0dGVyIHRvIGxvb2sgYXQgY2x1c3RlciBpZGVudGl0aWVzIGFuZCBvbmx5IHN0b3BcbiMgb25jZSB0aGVzZSBzdG9wIGNoYW5naW5nXG5mX2ttZWFucyA8LSBmdW5jdGlvbih4LCBrLCBuaXRlcj01MCkge1xuICBmb3IoaSBpbiAxOm5pdGVyKSB7XG4gICAgaWYoaSA9PSAxKVxuICAgICAgY2VudHJvaWRzIDwtIGZfY2hvb3NlX3JhbmRvbV9jZW50cm9pZHMoeCwgaylcbiAgICBlbHNlXG4gICAgICBjZW50cm9pZHMgPC0gZl9yZWNhbGN1bGF0ZV9jZW50cm9pZHMoY2x1c3Rlcl9pZHMsIHgpXG4gICAgY2x1c3Rlcl9pZHMgPC0gZl9jbHVzdGVyKHgsIGNlbnRyb2lkcylcbiAgfVxuICByZXR1cm4oY2x1c3Rlcl9pZHMpXG59XG5jbHVzdGVycyA8LSBmX2ttZWFucyh4LCAzKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdD1scygpKVxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KHJlc2hhcGUyKVxuaXJpc1xuYGBgIn0= -->
+<pre class="r"><code>rm(list=ls())
+library(tidyverse)
+library(reshape2)
+iris</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6NSwibnJvdyI6MTUwfSwicmRmIjoiSDRzSUFBQUFBQUFBQTkyWXpXNGJWUlRIcnoxangzYmMxUGx5SFRkdG55Q1dVRGZzNmdWaXhRSlJFTjBhWjlKYUdEdXkzY0NTcDRnRWI5SkhRSUlWcSs2UWVJRlVJRVJGWlpqeG5OK2grYnNqZDUyUnJPUHovVC9uM3JuMzJKOTk5T1JoNDBramhCQ0ZxRm9LVVNYOUdpcGZmUDd4eVljaHhPV1VLWVU0MURQNlhXcTBuMm5UejA3NnVld2ZuSzJlL3Y0UDJmTmpmKy9uN1BtbHYyZnlnN0I2K29mb1JiNXJjdnl4MjMrNGVwenVHcjFqdEcxNXNBY0hjbmpWZTM1d1d6endPQ1VPOVJqRjN1T2F2RzErMUVFY2xlOEtIdXoycEIrT1EzRktIWWVDLzlqb2tjVzVheFFjWFhBWjdpUDZiSFpkY0ZHLzJkOHhmY2Y0RHYwMjJxVVB4ck5PSFpVVHgzanlPeTg0N3BxZStCM0JUMTFRenl2N0RyNHJkWU5MNDNTa0RsOVAyV2RRNnRSOVNCN2lIRXZkck1kOWVZL3VTZDNIUnJIMzlaWDNnVHplUitLYkhrby9mSDlZL3Z1Q1cvTlRwNjRYK252R1B6Q0tYdGRaOHh6Sk9vR0wvUERVcC90QzE1VzZ3V3Y3enMrdHB1bHJSdXNXdjJiMlRhTzNMZDYyMEMyajJOOHlmL1ExaWQrUzk1dTQ0Tml4dmtDSlExendORVJQL0cySkI2OTFJVzlabkpiSjBXTlBIUElXNVNsYkhQV2pqcHJ3MkZGWFErU0tsL2hWb2ZoRnNoNFY4dy9TLzVMSnQ4UytKdlhoajMwcys0UDh5T0U5bnNqaDBjZVdEOXlSNElacXY3VWY2TUVSU3gyeDJHdGM3WVBXMDlqZ3AvczdGajE4VS9hVnh0TzhkZEd6YjZpSGRkSDFxQXBlM1ZlNkhrWDhqc1R6OVM1NEQzVC9PQyswSXJnYmtwOCtyTVVQUEt0ejY5RmZ1Wi9UUC9QNGovN09qVnorVCs3dnZPcmhvYTl6WEs1L1pmd2ZGZ2M3OG1rZTlNcGZpWHhwZnVTREtyNGlmVkVkNEZSODJoOTRwZVFCbitJbzZPUC84NjZ0Ry9kM3kzam1OUFRZcy83bzlUN2dYRzZKSCs4VDl3aHhXNUtIZVB1Yzk0S1BlTXpWUG9jYnIzT3BudXVjMytRNTBEb0ZOL0g5M2pHOTF5RnkrdU45RUFwdXYxL05udmtCUE15YmJYano2d3BlbmRPWVUveDNoTW1aRDNVK1Y3M09MVDQvbXR6bmJlRjlubVM5V01lQ09uUU9hd3R1ZUozWDJ4TC9zTUIvclkrR1QzOGZ3TXZ2cmNDNTlaTzlSNXZvUzZPLzJ2dXMraGNGZmk4SzlDK0ZFbGVwMnNQL1p1OTdFYzczcmFjSTkvdldWNFQzZCtNMzlVMnBubWQ2UGlyLzJ2eXVSRTZjSzRrRGoxN3QxUTZlZStlTm5NK2J6bmxvMGYzelN2QVRoN3IwSHR4MFgrQlBYbmp0aitLRmdzZDQ3bi91bjM0d08rdUR6ejNJcWZPTjJERkhoSGZIUSs1enA4MkhhM25LMTlmSjU4Z2c4ZkVUdkd1NDBOUGZwY1FyU2QrdHI1NDNLcWlYdXJTZXBmakgxK3RZeXk5OUNDRzZsWW92US9ibjE4MzRsRy9JSjdvWm4ydC9yRmJIeVVVeW5xZmZXaXV0U2VmSllqb2ZHTmU0U0diejBYQTZuczVNVXI4WXpaNk9KcVBoUU1KVmh1UEJuR2llNDJ3d1hLUytJU3pWZkRMNEpzRzhZc0xtNCtSOE1PNTlra3llTHA2WmJEdVhmVGs2ZFZIejAyU3hacGJMM2piYmVueWVERWRaa211WjY3UHB0ejJ5Wnk5YytmdXdlaTV6dytoZkthSnhPbGdNZW1lejFPVWRoV3hOenhlajZTUU5WdVpmNnJlZFN6TVIzSDQreVpLZm5neWZQWjk4ZmZKQmxpRGtiMHN3UUtVY2pIK3Y1Q2xqZ05HdWF0cUEwU1NobytQQlY4blltSjIweUZXTnZmUFphTEtna2xRNjd5Mm1hYWVRcEd1TFpGVmJXUDRIWFNpd2RKd1hBQUE9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Sepal.Length"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Sepal.Width"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Petal.Length"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Petal.Width"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Species"],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"5.1","2":"3.5","3":"1.4","4":"0.2","5":"setosa"},{"1":"4.9","2":"3.0","3":"1.4","4":"0.2","5":"setosa"},{"1":"4.7","2":"3.2","3":"1.3","4":"0.2","5":"setosa"},{"1":"4.6","2":"3.1","3":"1.5","4":"0.2","5":"setosa"},{"1":"5.0","2":"3.6","3":"1.4","4":"0.2","5":"setosa"},{"1":"5.4","2":"3.9","3":"1.7","4":"0.4","5":"setosa"},{"1":"4.6","2":"3.4","3":"1.4","4":"0.3","5":"setosa"},{"1":"5.0","2":"3.4","3":"1.5","4":"0.2","5":"setosa"},{"1":"4.4","2":"2.9","3":"1.4","4":"0.2","5":"setosa"},{"1":"4.9","2":"3.1","3":"1.5","4":"0.1","5":"setosa"},{"1":"5.4","2":"3.7","3":"1.5","4":"0.2","5":"setosa"},{"1":"4.8","2":"3.4","3":"1.6","4":"0.2","5":"setosa"},{"1":"4.8","2":"3.0","3":"1.4","4":"0.1","5":"setosa"},{"1":"4.3","2":"3.0","3":"1.1","4":"0.1","5":"setosa"},{"1":"5.8","2":"4.0","3":"1.2","4":"0.2","5":"setosa"},{"1":"5.7","2":"4.4","3":"1.5","4":"0.4","5":"setosa"},{"1":"5.4","2":"3.9","3":"1.3","4":"0.4","5":"setosa"},{"1":"5.1","2":"3.5","3":"1.4","4":"0.3","5":"setosa"},{"1":"5.7","2":"3.8","3":"1.7","4":"0.3","5":"setosa"},{"1":"5.1","2":"3.8","3":"1.5","4":"0.3","5":"setosa"},{"1":"5.4","2":"3.4","3":"1.7","4":"0.2","5":"setosa"},{"1":"5.1","2":"3.7","3":"1.5","4":"0.4","5":"setosa"},{"1":"4.6","2":"3.6","3":"1.0","4":"0.2","5":"setosa"},{"1":"5.1","2":"3.3","3":"1.7","4":"0.5","5":"setosa"},{"1":"4.8","2":"3.4","3":"1.9","4":"0.2","5":"setosa"},{"1":"5.0","2":"3.0","3":"1.6","4":"0.2","5":"setosa"},{"1":"5.0","2":"3.4","3":"1.6","4":"0.4","5":"setosa"},{"1":"5.2","2":"3.5","3":"1.5","4":"0.2","5":"setosa"},{"1":"5.2","2":"3.4","3":"1.4","4":"0.2","5":"setosa"},{"1":"4.7","2":"3.2","3":"1.6","4":"0.2","5":"setosa"},{"1":"4.8","2":"3.1","3":"1.6","4":"0.2","5":"setosa"},{"1":"5.4","2":"3.4","3":"1.5","4":"0.4","5":"setosa"},{"1":"5.2","2":"4.1","3":"1.5","4":"0.1","5":"setosa"},{"1":"5.5","2":"4.2","3":"1.4","4":"0.2","5":"setosa"},{"1":"4.9","2":"3.1","3":"1.5","4":"0.2","5":"setosa"},{"1":"5.0","2":"3.2","3":"1.2","4":"0.2","5":"setosa"},{"1":"5.5","2":"3.5","3":"1.3","4":"0.2","5":"setosa"},{"1":"4.9","2":"3.6","3":"1.4","4":"0.1","5":"setosa"},{"1":"4.4","2":"3.0","3":"1.3","4":"0.2","5":"setosa"},{"1":"5.1","2":"3.4","3":"1.5","4":"0.2","5":"setosa"},{"1":"5.0","2":"3.5","3":"1.3","4":"0.3","5":"setosa"},{"1":"4.5","2":"2.3","3":"1.3","4":"0.3","5":"setosa"},{"1":"4.4","2":"3.2","3":"1.3","4":"0.2","5":"setosa"},{"1":"5.0","2":"3.5","3":"1.6","4":"0.6","5":"setosa"},{"1":"5.1","2":"3.8","3":"1.9","4":"0.4","5":"setosa"},{"1":"4.8","2":"3.0","3":"1.4","4":"0.3","5":"setosa"},{"1":"5.1","2":"3.8","3":"1.6","4":"0.2","5":"setosa"},{"1":"4.6","2":"3.2","3":"1.4","4":"0.2","5":"setosa"},{"1":"5.3","2":"3.7","3":"1.5","4":"0.2","5":"setosa"},{"1":"5.0","2":"3.3","3":"1.4","4":"0.2","5":"setosa"},{"1":"7.0","2":"3.2","3":"4.7","4":"1.4","5":"versicolor"},{"1":"6.4","2":"3.2","3":"4.5","4":"1.5","5":"versicolor"},{"1":"6.9","2":"3.1","3":"4.9","4":"1.5","5":"versicolor"},{"1":"5.5","2":"2.3","3":"4.0","4":"1.3","5":"versicolor"},{"1":"6.5","2":"2.8","3":"4.6","4":"1.5","5":"versicolor"},{"1":"5.7","2":"2.8","3":"4.5","4":"1.3","5":"versicolor"},{"1":"6.3","2":"3.3","3":"4.7","4":"1.6","5":"versicolor"},{"1":"4.9","2":"2.4","3":"3.3","4":"1.0","5":"versicolor"},{"1":"6.6","2":"2.9","3":"4.6","4":"1.3","5":"versicolor"},{"1":"5.2","2":"2.7","3":"3.9","4":"1.4","5":"versicolor"},{"1":"5.0","2":"2.0","3":"3.5","4":"1.0","5":"versicolor"},{"1":"5.9","2":"3.0","3":"4.2","4":"1.5","5":"versicolor"},{"1":"6.0","2":"2.2","3":"4.0","4":"1.0","5":"versicolor"},{"1":"6.1","2":"2.9","3":"4.7","4":"1.4","5":"versicolor"},{"1":"5.6","2":"2.9","3":"3.6","4":"1.3","5":"versicolor"},{"1":"6.7","2":"3.1","3":"4.4","4":"1.4","5":"versicolor"},{"1":"5.6","2":"3.0","3":"4.5","4":"1.5","5":"versicolor"},{"1":"5.8","2":"2.7","3":"4.1","4":"1.0","5":"versicolor"},{"1":"6.2","2":"2.2","3":"4.5","4":"1.5","5":"versicolor"},{"1":"5.6","2":"2.5","3":"3.9","4":"1.1","5":"versicolor"},{"1":"5.9","2":"3.2","3":"4.8","4":"1.8","5":"versicolor"},{"1":"6.1","2":"2.8","3":"4.0","4":"1.3","5":"versicolor"},{"1":"6.3","2":"2.5","3":"4.9","4":"1.5","5":"versicolor"},{"1":"6.1","2":"2.8","3":"4.7","4":"1.2","5":"versicolor"},{"1":"6.4","2":"2.9","3":"4.3","4":"1.3","5":"versicolor"},{"1":"6.6","2":"3.0","3":"4.4","4":"1.4","5":"versicolor"},{"1":"6.8","2":"2.8","3":"4.8","4":"1.4","5":"versicolor"},{"1":"6.7","2":"3.0","3":"5.0","4":"1.7","5":"versicolor"},{"1":"6.0","2":"2.9","3":"4.5","4":"1.5","5":"versicolor"},{"1":"5.7","2":"2.6","3":"3.5","4":"1.0","5":"versicolor"},{"1":"5.5","2":"2.4","3":"3.8","4":"1.1","5":"versicolor"},{"1":"5.5","2":"2.4","3":"3.7","4":"1.0","5":"versicolor"},{"1":"5.8","2":"2.7","3":"3.9","4":"1.2","5":"versicolor"},{"1":"6.0","2":"2.7","3":"5.1","4":"1.6","5":"versicolor"},{"1":"5.4","2":"3.0","3":"4.5","4":"1.5","5":"versicolor"},{"1":"6.0","2":"3.4","3":"4.5","4":"1.6","5":"versicolor"},{"1":"6.7","2":"3.1","3":"4.7","4":"1.5","5":"versicolor"},{"1":"6.3","2":"2.3","3":"4.4","4":"1.3","5":"versicolor"},{"1":"5.6","2":"3.0","3":"4.1","4":"1.3","5":"versicolor"},{"1":"5.5","2":"2.5","3":"4.0","4":"1.3","5":"versicolor"},{"1":"5.5","2":"2.6","3":"4.4","4":"1.2","5":"versicolor"},{"1":"6.1","2":"3.0","3":"4.6","4":"1.4","5":"versicolor"},{"1":"5.8","2":"2.6","3":"4.0","4":"1.2","5":"versicolor"},{"1":"5.0","2":"2.3","3":"3.3","4":"1.0","5":"versicolor"},{"1":"5.6","2":"2.7","3":"4.2","4":"1.3","5":"versicolor"},{"1":"5.7","2":"3.0","3":"4.2","4":"1.2","5":"versicolor"},{"1":"5.7","2":"2.9","3":"4.2","4":"1.3","5":"versicolor"},{"1":"6.2","2":"2.9","3":"4.3","4":"1.3","5":"versicolor"},{"1":"5.1","2":"2.5","3":"3.0","4":"1.1","5":"versicolor"},{"1":"5.7","2":"2.8","3":"4.1","4":"1.3","5":"versicolor"},{"1":"6.3","2":"3.3","3":"6.0","4":"2.5","5":"virginica"},{"1":"5.8","2":"2.7","3":"5.1","4":"1.9","5":"virginica"},{"1":"7.1","2":"3.0","3":"5.9","4":"2.1","5":"virginica"},{"1":"6.3","2":"2.9","3":"5.6","4":"1.8","5":"virginica"},{"1":"6.5","2":"3.0","3":"5.8","4":"2.2","5":"virginica"},{"1":"7.6","2":"3.0","3":"6.6","4":"2.1","5":"virginica"},{"1":"4.9","2":"2.5","3":"4.5","4":"1.7","5":"virginica"},{"1":"7.3","2":"2.9","3":"6.3","4":"1.8","5":"virginica"},{"1":"6.7","2":"2.5","3":"5.8","4":"1.8","5":"virginica"},{"1":"7.2","2":"3.6","3":"6.1","4":"2.5","5":"virginica"},{"1":"6.5","2":"3.2","3":"5.1","4":"2.0","5":"virginica"},{"1":"6.4","2":"2.7","3":"5.3","4":"1.9","5":"virginica"},{"1":"6.8","2":"3.0","3":"5.5","4":"2.1","5":"virginica"},{"1":"5.7","2":"2.5","3":"5.0","4":"2.0","5":"virginica"},{"1":"5.8","2":"2.8","3":"5.1","4":"2.4","5":"virginica"},{"1":"6.4","2":"3.2","3":"5.3","4":"2.3","5":"virginica"},{"1":"6.5","2":"3.0","3":"5.5","4":"1.8","5":"virginica"},{"1":"7.7","2":"3.8","3":"6.7","4":"2.2","5":"virginica"},{"1":"7.7","2":"2.6","3":"6.9","4":"2.3","5":"virginica"},{"1":"6.0","2":"2.2","3":"5.0","4":"1.5","5":"virginica"},{"1":"6.9","2":"3.2","3":"5.7","4":"2.3","5":"virginica"},{"1":"5.6","2":"2.8","3":"4.9","4":"2.0","5":"virginica"},{"1":"7.7","2":"2.8","3":"6.7","4":"2.0","5":"virginica"},{"1":"6.3","2":"2.7","3":"4.9","4":"1.8","5":"virginica"},{"1":"6.7","2":"3.3","3":"5.7","4":"2.1","5":"virginica"},{"1":"7.2","2":"3.2","3":"6.0","4":"1.8","5":"virginica"},{"1":"6.2","2":"2.8","3":"4.8","4":"1.8","5":"virginica"},{"1":"6.1","2":"3.0","3":"4.9","4":"1.8","5":"virginica"},{"1":"6.4","2":"2.8","3":"5.6","4":"2.1","5":"virginica"},{"1":"7.2","2":"3.0","3":"5.8","4":"1.6","5":"virginica"},{"1":"7.4","2":"2.8","3":"6.1","4":"1.9","5":"virginica"},{"1":"7.9","2":"3.8","3":"6.4","4":"2.0","5":"virginica"},{"1":"6.4","2":"2.8","3":"5.6","4":"2.2","5":"virginica"},{"1":"6.3","2":"2.8","3":"5.1","4":"1.5","5":"virginica"},{"1":"6.1","2":"2.6","3":"5.6","4":"1.4","5":"virginica"},{"1":"7.7","2":"3.0","3":"6.1","4":"2.3","5":"virginica"},{"1":"6.3","2":"3.4","3":"5.6","4":"2.4","5":"virginica"},{"1":"6.4","2":"3.1","3":"5.5","4":"1.8","5":"virginica"},{"1":"6.0","2":"3.0","3":"4.8","4":"1.8","5":"virginica"},{"1":"6.9","2":"3.1","3":"5.4","4":"2.1","5":"virginica"},{"1":"6.7","2":"3.1","3":"5.6","4":"2.4","5":"virginica"},{"1":"6.9","2":"3.1","3":"5.1","4":"2.3","5":"virginica"},{"1":"5.8","2":"2.7","3":"5.1","4":"1.9","5":"virginica"},{"1":"6.8","2":"3.2","3":"5.9","4":"2.3","5":"virginica"},{"1":"6.7","2":"3.3","3":"5.7","4":"2.5","5":"virginica"},{"1":"6.7","2":"3.0","3":"5.2","4":"2.3","5":"virginica"},{"1":"6.3","2":"2.5","3":"5.0","4":"1.9","5":"virginica"},{"1":"6.5","2":"3.0","3":"5.2","4":"2.0","5":"virginica"},{"1":"6.2","2":"3.4","3":"5.4","4":"2.3","5":"virginica"},{"1":"5.9","2":"3.0","3":"5.1","4":"1.8","5":"virginica"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[150]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBpcmlzICU+JSBcbiAgc2VsZWN0KC1TcGVjaWVzKVxuYGBgIn0= -->
 <pre class="r"><code>x &lt;- iris %&gt;% 
-  select(-Species)
-# choose number of clusters, k
-f_choose_random_centroids &lt;- function(x, k=3) {
+  select(-Species)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="2" style="list-style-type: decimal">
+<li>Write a function which samples <span class="math inline">\(k\)</span> data points (without replacement) to be the initial centroids.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9jaG9vc2VfcmFuZG9tX2NlbnRyb2lkcyA8LSBmdW5jdGlvbih4LCBrPTMpIHtcbiAgaWR4cyA8LSAxOm5yb3coeClcbiAgaWR4cyA8LSBzYW1wbGUoaWR4cywgaylcbiAgeFtpZHhzLCBdXG59XG5gYGAifQ== -->
+<pre class="r"><code>f_choose_random_centroids &lt;- function(x, k=3) {
   idxs &lt;- 1:nrow(x)
   idxs &lt;- sample(idxs, k)
-  return(x[idxs, ])
-}
-# assign points to nearest centroid
-f_eucl_dist &lt;- function(x1, x2) {return(sqrt(sum((x1 - x2)^2)))}
-f_eucl_dist_all &lt;- function(x, centroid) {
-  return(map_dbl(seq(1, nrow(x), 1), ~f_eucl_dist(centroid, x[., ])))
-}
-f_eucl_dist_centroids &lt;- function(x, centroids) {
+  x[idxs, ]
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="3" style="list-style-type: decimal">
+<li>Write a function which calculates the Euclidean distance between two points.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9ldWNsX2Rpc3QgPC0gZnVuY3Rpb24oeDEsIHgyKSB7XG4gIHNxcnQoc3VtKCh4MSAtIHgyKV4yKSlcbn1cbmBgYCJ9 -->
+<pre class="r"><code>f_eucl_dist &lt;- function(x1, x2) {
+  sqrt(sum((x1 - x2)^2))
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="4" style="list-style-type: decimal">
+<li>Write a function which finds the distance between each row in a matrix (where each of its rows is a data point) and a centroid.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9ldWNsX2Rpc3RfYWxsIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkKSB7XG4gIG1hcF9kYmwoc2VxKDEsIG5yb3coeCksIDEpLCB+Zl9ldWNsX2Rpc3QoY2VudHJvaWQsIHhbLiwgXSkpXG59XG5gYGAifQ== -->
+<pre class="r"><code>f_eucl_dist_all &lt;- function(x, centroid) {
+  map_dbl(seq(1, nrow(x), 1), ~f_eucl_dist(centroid, x[., ]))
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="5" style="list-style-type: decimal">
+<li>Write a function which finds the distance between each row in a matrix (where each of its rows is a data point) and a list of centroids. It may be easiest to return these distances in a matrix, where each row corresponds to a data point and each column to a centroid.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9ldWNsX2Rpc3RfY2VudHJvaWRzIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykge1xuICBtX2Rpc3QgPC0gbWF0cml4KG5yb3cgPSBucm93KHgpLCBuY29sID0gbnJvdyhjZW50cm9pZHMpKVxuICBmb3IoaSBpbiAxOm5yb3coY2VudHJvaWRzKSlcbiAgICBtX2Rpc3RbLCBpXSA8LSBmX2V1Y2xfZGlzdF9hbGwoeCwgY2VudHJvaWRzW2ksIF0pXG4gIG1fZGlzdFxufVxuYGBgIn0= -->
+<pre class="r"><code>f_eucl_dist_centroids &lt;- function(x, centroids) {
   m_dist &lt;- matrix(nrow = nrow(x), ncol = nrow(centroids))
   for(i in 1:nrow(centroids))
     m_dist[, i] &lt;- f_eucl_dist_all(x, centroids[i, ])
-  return(m_dist)
-}
-f_cluster &lt;- function(x, centroids) {
+  m_dist
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="6" style="list-style-type: decimal">
+<li>Write a function which assigns each data point to a cluster according to its nearest centroid. The function should return a list of centroid ids: one per each data point.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9jbHVzdGVyIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykge1xuICBtX2Rpc3QgPC0gZl9ldWNsX2Rpc3RfY2VudHJvaWRzKHgsIGNlbnRyb2lkcylcbiAgY2x1c3Rlcl9pZCA8LSB2ZWN0b3IobGVuZ3RoID0gbnJvdyhtX2Rpc3QpKVxuICBmb3IoaSBpbiBzZXFfYWxvbmcoY2x1c3Rlcl9pZCkpXG4gICAgY2x1c3Rlcl9pZFtpXSA8LSB3aGljaC5taW4obV9kaXN0W2ksIF0pXG4gIGNsdXN0ZXJfaWRcbn1cbmBgYCJ9 -->
+<pre class="r"><code>f_cluster &lt;- function(x, centroids) {
   m_dist &lt;- f_eucl_dist_centroids(x, centroids)
   cluster_id &lt;- vector(length = nrow(m_dist))
   for(i in seq_along(cluster_id))
     cluster_id[i] &lt;- which.min(m_dist[i, ])
-  return(cluster_id)
-}
-# recalculate centroids based on clusters
-f_recalculate_centroids &lt;- function(cluster_ids, x) {
+  cluster_id
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="7" style="list-style-type: decimal">
+<li>Create a function which calculates new centroids using the points which have been assigned to each cluster.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9yZWNhbGN1bGF0ZV9jZW50cm9pZHMgPC0gZnVuY3Rpb24oY2x1c3Rlcl9pZHMsIHgpIHtcbiAgZGYgPC0geCAlPiUgXG4gICAgYXMuZGF0YS5mcmFtZSgpICU+JSBcbiAgICBtdXRhdGUoY2x1c3Rlcj1jbHVzdGVyX2lkcylcbiAgbXUgPC0gZGYgJT4lIFxuICAgIGdyb3VwX2J5KGNsdXN0ZXIpICU+JSBcbiAgICBzdW1tYXJpc2VfYWxsKC5mdW5zPW1lYW4pICU+JSBcbiAgICBzZWxlY3QoLWNsdXN0ZXIpXG4gIG11XG59XG5gYGAifQ== -->
+<pre class="r"><code>f_recalculate_centroids &lt;- function(cluster_ids, x) {
   df &lt;- x %&gt;% 
     as.data.frame() %&gt;% 
     mutate(cluster=cluster_ids)
@@ -276,9 +334,24 @@ f_recalculate_centroids &lt;- function(cluster_ids, x) {
     group_by(cluster) %&gt;% 
     summarise_all(.funs=mean) %&gt;% 
     select(-cluster)
-  return(mu)  
-}
-# here I just use 50 iterations as a stopping criteria
+  mu
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="8" style="list-style-type: decimal">
+<li>Putting your functions together in sequence create a function that does k-means clustering! To do this, do the following:</li>
+</ol>
+<p>create a for loop where:</p>
+<ul>
+<li>if first time round loop, choose random centroids to be data points from the dataset; if subsequent, calculate centroids using your function that determines the centroids of each cluster</li>
+<li>calculates distance of all points from all centroids, and assigns clusters to the points based on their minimal distance</li>
+</ul>
+<p>For simplicitly, here we terminate the loop after 50 iterations.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBoZXJlIEkganVzdCB1c2UgNTAgaXRlcmF0aW9ucyBhcyBhIHN0b3BwaW5nIGNyaXRlcmlhXG4jIGJldHRlciB0byBsb29rIGF0IGNsdXN0ZXIgaWRlbnRpdGllcyBhbmQgb25seSBzdG9wXG4jIG9uY2UgdGhlc2Ugc3RvcCBjaGFuZ2luZ1xuZl9rbWVhbnMgPC0gZnVuY3Rpb24oeCwgaywgbml0ZXI9NTApIHtcbiAgZm9yKGkgaW4gMTpuaXRlcikge1xuICAgIGlmKGkgPT0gMSlcbiAgICAgIGNlbnRyb2lkcyA8LSBmX2Nob29zZV9yYW5kb21fY2VudHJvaWRzKHgsIGspXG4gICAgZWxzZVxuICAgICAgY2VudHJvaWRzIDwtIGZfcmVjYWxjdWxhdGVfY2VudHJvaWRzKGNsdXN0ZXJfaWRzLCB4KVxuICAgIGNsdXN0ZXJfaWRzIDwtIGZfY2x1c3Rlcih4LCBjZW50cm9pZHMpXG4gIH1cbiAgY2x1c3Rlcl9pZHNcbn1cbmBgYCJ9 -->
+<pre class="r"><code># here I just use 50 iterations as a stopping criteria
 # better to look at cluster identities and only stop
 # once these stop changing
 f_kmeans &lt;- function(x, k, niter=50) {
@@ -289,13 +362,22 @@ f_kmeans &lt;- function(x, k, niter=50) {
       centroids &lt;- f_recalculate_centroids(cluster_ids, x)
     cluster_ids &lt;- f_cluster(x, centroids)
   }
-  return(cluster_ids)
-}
-clusters &lt;- f_kmeans(x, 3)</code></pre>
+  cluster_ids
+}</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<ol start="2" style="list-style-type: decimal">
+<ol start="9" style="list-style-type: decimal">
+<li>Using <span class="math inline">\(k=3\)</span> clusters, use your k-means clustering function to determine cluster ids.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2x1c3RlcnMgPC0gZl9rbWVhbnMoeCwgMylcbmBgYCJ9 -->
+<pre class="r"><code>clusters &lt;- f_kmeans(x, 3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="10" style="list-style-type: decimal">
 <li>How do your clusters correspond to species?</li>
 </ol>
 <!-- rnb-text-end -->
@@ -306,17 +388,17 @@ clusters &lt;- f_kmeans(x, 3)</code></pre>
   mutate(cluster=clusters)
 table(df$Species, df$cluster)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgXG4gICAgICAgICAgICAgIDEgIDIgIDNcbiAgc2V0b3NhICAgICAgMCAgMCA1MFxuICB2ZXJzaWNvbG9yICAyIDQ4ICAwXG4gIHZpcmdpbmljYSAgMzYgMTQgIDBcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgXG4gICAgICAgICAgICAgIDEgIDIgIDNcbiAgc2V0b3NhICAgICAgMCA1MCAgMFxuICB2ZXJzaWNvbG9yICAzICAwIDQ3XG4gIHZpcmdpbmljYSAgMzYgIDAgMTRcbiJ9 -->
 <pre><code>            
               1  2  3
-  setosa      0  0 50
-  versicolor  2 48  0
-  virginica  36 14  0</code></pre>
+  setosa      0 50  0
+  versicolor  3  0 47
+  virginica  36  0 14</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Does a pretty good job of separating out the three species. Setosa is more different from the other two classes.</p>
-<ol start="3" style="list-style-type: decimal">
+<ol start="11" style="list-style-type: decimal">
 <li>What happens if you choose only two clusters?</li>
 </ol>
 <!-- rnb-text-end -->
@@ -337,10 +419,10 @@ table(df$Species, df$cluster)</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Splits data in setosa and others. Makes sense, since assuming 3 clusters mixtured up the versicolor and virginica datasets</p>
+<p>Splits data in setosa and others. This makes sense, since assuming 3 clusters mixtured up the versicolor and virginica datasets</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJvYmxlbSBzaGVldDogY2x1c3RlcmluZyB1c2luZyBrLW1lYW5zIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpgYGB7cn0Kcm0obGlzdD1scygpKQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShyZXNoYXBlMikKYGBgCgoxLiBMb2FkIHRoZSBpcmlzIGRhdGEuIFdyaXRlIGEgay1tZWFucyBhbGdvcml0aG0gZnJvbSBzY3JhdGNoIGFuZCB1c2UgaXQgdG8gY2x1c3RlciB0aGUgcG9pbnRzIGFzc3VtaW5nIDMgY2x1c3RlcnMuIFVzZSB0aGUgRXVjbGlkZWFuIGRpc3RhbmNlIG1ldHJpYy4KYGBge3J9CnggPC0gaXJpcyAlPiUgCiAgc2VsZWN0KC1TcGVjaWVzKQoKIyBjaG9vc2UgbnVtYmVyIG9mIGNsdXN0ZXJzLCBrCmZfY2hvb3NlX3JhbmRvbV9jZW50cm9pZHMgPC0gZnVuY3Rpb24oeCwgaz0zKSB7CiAgaWR4cyA8LSAxOm5yb3coeCkKICBpZHhzIDwtIHNhbXBsZShpZHhzLCBrKQogIHJldHVybih4W2lkeHMsIF0pCn0KCiMgYXNzaWduIHBvaW50cyB0byBuZWFyZXN0IGNlbnRyb2lkCmZfZXVjbF9kaXN0IDwtIGZ1bmN0aW9uKHgxLCB4Mikge3JldHVybihzcXJ0KHN1bSgoeDEgLSB4MileMikpKX0KZl9ldWNsX2Rpc3RfYWxsIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkKSB7CiAgcmV0dXJuKG1hcF9kYmwoc2VxKDEsIG5yb3coeCksIDEpLCB+Zl9ldWNsX2Rpc3QoY2VudHJvaWQsIHhbLiwgXSkpKQp9CmZfZXVjbF9kaXN0X2NlbnRyb2lkcyA8LSBmdW5jdGlvbih4LCBjZW50cm9pZHMpIHsKICBtX2Rpc3QgPC0gbWF0cml4KG5yb3cgPSBucm93KHgpLCBuY29sID0gbnJvdyhjZW50cm9pZHMpKQogIGZvcihpIGluIDE6bnJvdyhjZW50cm9pZHMpKQogICAgbV9kaXN0WywgaV0gPC0gZl9ldWNsX2Rpc3RfYWxsKHgsIGNlbnRyb2lkc1tpLCBdKQogIHJldHVybihtX2Rpc3QpCn0KZl9jbHVzdGVyIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykgewogIG1fZGlzdCA8LSBmX2V1Y2xfZGlzdF9jZW50cm9pZHMoeCwgY2VudHJvaWRzKQogIGNsdXN0ZXJfaWQgPC0gdmVjdG9yKGxlbmd0aCA9IG5yb3cobV9kaXN0KSkKICBmb3IoaSBpbiBzZXFfYWxvbmcoY2x1c3Rlcl9pZCkpCiAgICBjbHVzdGVyX2lkW2ldIDwtIHdoaWNoLm1pbihtX2Rpc3RbaSwgXSkKICByZXR1cm4oY2x1c3Rlcl9pZCkKfQoKIyByZWNhbGN1bGF0ZSBjZW50cm9pZHMgYmFzZWQgb24gY2x1c3RlcnMKZl9yZWNhbGN1bGF0ZV9jZW50cm9pZHMgPC0gZnVuY3Rpb24oY2x1c3Rlcl9pZHMsIHgpIHsKICBkZiA8LSB4ICU+JSAKICAgIGFzLmRhdGEuZnJhbWUoKSAlPiUgCiAgICBtdXRhdGUoY2x1c3Rlcj1jbHVzdGVyX2lkcykKICBtdSA8LSBkZiAlPiUgCiAgICBncm91cF9ieShjbHVzdGVyKSAlPiUgCiAgICBzdW1tYXJpc2VfYWxsKC5mdW5zPW1lYW4pICU+JSAKICAgIHNlbGVjdCgtY2x1c3RlcikKICByZXR1cm4obXUpICAKfQoKIyBoZXJlIEkganVzdCB1c2UgNTAgaXRlcmF0aW9ucyBhcyBhIHN0b3BwaW5nIGNyaXRlcmlhCiMgYmV0dGVyIHRvIGxvb2sgYXQgY2x1c3RlciBpZGVudGl0aWVzIGFuZCBvbmx5IHN0b3AKIyBvbmNlIHRoZXNlIHN0b3AgY2hhbmdpbmcKZl9rbWVhbnMgPC0gZnVuY3Rpb24oeCwgaywgbml0ZXI9NTApIHsKICBmb3IoaSBpbiAxOm5pdGVyKSB7CiAgICBpZihpID09IDEpCiAgICAgIGNlbnRyb2lkcyA8LSBmX2Nob29zZV9yYW5kb21fY2VudHJvaWRzKHgsIGspCiAgICBlbHNlCiAgICAgIGNlbnRyb2lkcyA8LSBmX3JlY2FsY3VsYXRlX2NlbnRyb2lkcyhjbHVzdGVyX2lkcywgeCkKICAgIGNsdXN0ZXJfaWRzIDwtIGZfY2x1c3Rlcih4LCBjZW50cm9pZHMpCiAgfQogIHJldHVybihjbHVzdGVyX2lkcykKfQoKY2x1c3RlcnMgPC0gZl9rbWVhbnMoeCwgMykKYGBgCgoyLiBIb3cgZG8geW91ciBjbHVzdGVycyBjb3JyZXNwb25kIHRvIHNwZWNpZXM/CmBgYHtyfQpkZiA8LSBpcmlzICU+JSAKICBhcy5kYXRhLmZyYW1lKCkgJT4lIAogIG11dGF0ZShjbHVzdGVyPWNsdXN0ZXJzKQp0YWJsZShkZiRTcGVjaWVzLCBkZiRjbHVzdGVyKQpgYGAKRG9lcyBhIHByZXR0eSBnb29kIGpvYiBvZiBzZXBhcmF0aW5nIG91dCB0aGUgdGhyZWUgc3BlY2llcy4gU2V0b3NhIGlzIG1vcmUgZGlmZmVyZW50IGZyb20gdGhlIG90aGVyIHR3byBjbGFzc2VzLgoKMy4gV2hhdCBoYXBwZW5zIGlmIHlvdSBjaG9vc2Ugb25seSB0d28gY2x1c3RlcnM/CmBgYHtyfQpjbHVzdGVycyA8LSBmX2ttZWFucyh4LCAyKQpkZiA8LSBpcmlzICU+JSAKICBhcy5kYXRhLmZyYW1lKCkgJT4lIAogIG11dGF0ZShjbHVzdGVyPWNsdXN0ZXJzKQp0YWJsZShkZiRTcGVjaWVzLCBkZiRjbHVzdGVyKQpgYGAKU3BsaXRzIGRhdGEgaW4gc2V0b3NhIGFuZCBvdGhlcnMuIE1ha2VzIHNlbnNlLCBzaW5jZSBhc3N1bWluZyAzIGNsdXN0ZXJzIG1peHR1cmVkIHVwIHRoZSB2ZXJzaWNvbG9yIGFuZCB2aXJnaW5pY2EgZGF0YXNldHMK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJvYmxlbSBzaGVldDogY2x1c3RlcmluZyB1c2luZyBrLW1lYW5zIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpJbiB0aGlzIHByb2JsZW0gc2V0LCB3ZSBhcmUgZ29pbmcgdG8gd3JpdGUgb3VyIG93biBrLW1lYW5zIGNsdXN0ZXJpbmcgYWxnb3JpdGhtLiBUaGUgZGF0YXNldCB3ZSBhcmUgZ29pbmcgdG8gdXNlIGlzIHRoZSBmYW1vdXMgKEZpc2hlcidzIG9yIEFuZGVyc29uJ3MpIGlyaXMgZGF0YSBzZXQsIHdoaWNoIGdpdmVzIHRoZSBtZWFzdXJlbWVudHMgaW4gY2VudGltZXRlcnMgb2YgdGhlIHZhcmlhYmxlcyBzZXBhbCBsZW5ndGggYW5kIHdpZHRoIGFuZCBwZXRhbCBsZW5ndGggYW5kIHdpZHRoLCByZXNwZWN0aXZlbHksIGZvciA1MCBmbG93ZXJzIGZyb20gZWFjaCBvZiAzIHNwZWNpZXMgb2YgaXJpcy4gVGhlIHNwZWNpZXMgYXJlIElyaXMgc2V0b3NhLCB2ZXJzaWNvbG9yLCBhbmQgdmlyZ2luaWNhLgoKMS4gTG9hZCB0aGUgaXJpcyBkYXRhIGFuZCBleGFtaW5lIHRoZSBkYXRhLiBIZXJlIHdlIGFyZSBub3QgZ29pbmcgdG8gdXNlIG51bWVyaWNhbCBkYXRhIG9uIHNlcGFsIGxlbmd0aCwgc2VwYWwgd2lkdGgsIHBldGFsIGxlbmd0aCBhbmQgcGV0YWwgd2lkdGggdG8gY2x1c3RlciB0aGUgc3BlY2ltZW5zLgpgYGB7cn0Kcm0obGlzdD1scygpKQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShyZXNoYXBlMikKCmlyaXMKeCA8LSBpcmlzICU+JSAKICBzZWxlY3QoLVNwZWNpZXMpCmBgYAoKCjIuIFdyaXRlIGEgZnVuY3Rpb24gd2hpY2ggc2FtcGxlcyAkayQgZGF0YSBwb2ludHMgKHdpdGhvdXQgcmVwbGFjZW1lbnQpIHRvIGJlIHRoZSBpbml0aWFsIGNlbnRyb2lkcy4KYGBge3J9CmZfY2hvb3NlX3JhbmRvbV9jZW50cm9pZHMgPC0gZnVuY3Rpb24oeCwgaz0zKSB7CiAgaWR4cyA8LSAxOm5yb3coeCkKICBpZHhzIDwtIHNhbXBsZShpZHhzLCBrKQogIHhbaWR4cywgXQp9CmBgYAoKMy4gV3JpdGUgYSBmdW5jdGlvbiB3aGljaCBjYWxjdWxhdGVzIHRoZSBFdWNsaWRlYW4gZGlzdGFuY2UgYmV0d2VlbiB0d28gcG9pbnRzLgpgYGB7cn0KZl9ldWNsX2Rpc3QgPC0gZnVuY3Rpb24oeDEsIHgyKSB7CiAgc3FydChzdW0oKHgxIC0geDIpXjIpKQp9CmBgYAoKNC4gV3JpdGUgYSBmdW5jdGlvbiB3aGljaCBmaW5kcyB0aGUgZGlzdGFuY2UgYmV0d2VlbiBlYWNoIHJvdyBpbiBhIG1hdHJpeCAod2hlcmUgZWFjaCBvZiBpdHMgcm93cyBpcyBhIGRhdGEgcG9pbnQpIGFuZCBhIGNlbnRyb2lkLgpgYGB7cn0KZl9ldWNsX2Rpc3RfYWxsIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkKSB7CiAgbWFwX2RibChzZXEoMSwgbnJvdyh4KSwgMSksIH5mX2V1Y2xfZGlzdChjZW50cm9pZCwgeFsuLCBdKSkKfQpgYGAKCjUuIFdyaXRlIGEgZnVuY3Rpb24gd2hpY2ggZmluZHMgdGhlIGRpc3RhbmNlIGJldHdlZW4gZWFjaCByb3cgaW4gYSBtYXRyaXggKHdoZXJlIGVhY2ggb2YgaXRzIHJvd3MgaXMgYSBkYXRhIHBvaW50KSBhbmQgYSBsaXN0IG9mIGNlbnRyb2lkcy4gSXQgbWF5IGJlIGVhc2llc3QgdG8gcmV0dXJuIHRoZXNlIGRpc3RhbmNlcyBpbiBhIG1hdHJpeCwgd2hlcmUgZWFjaCByb3cgY29ycmVzcG9uZHMgdG8gYSBkYXRhIHBvaW50IGFuZCBlYWNoIGNvbHVtbiB0byBhIGNlbnRyb2lkLgpgYGB7cn0KZl9ldWNsX2Rpc3RfY2VudHJvaWRzIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykgewogIG1fZGlzdCA8LSBtYXRyaXgobnJvdyA9IG5yb3coeCksIG5jb2wgPSBucm93KGNlbnRyb2lkcykpCiAgZm9yKGkgaW4gMTpucm93KGNlbnRyb2lkcykpCiAgICBtX2Rpc3RbLCBpXSA8LSBmX2V1Y2xfZGlzdF9hbGwoeCwgY2VudHJvaWRzW2ksIF0pCiAgbV9kaXN0Cn0KYGBgCgo2LiBXcml0ZSBhIGZ1bmN0aW9uIHdoaWNoIGFzc2lnbnMgZWFjaCBkYXRhIHBvaW50IHRvIGEgY2x1c3RlciBhY2NvcmRpbmcgdG8gaXRzIG5lYXJlc3QgY2VudHJvaWQuIFRoZSBmdW5jdGlvbiBzaG91bGQgcmV0dXJuIGEgbGlzdCBvZiBjZW50cm9pZCBpZHM6IG9uZSBwZXIgZWFjaCBkYXRhIHBvaW50LgpgYGB7cn0KZl9jbHVzdGVyIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykgewogIG1fZGlzdCA8LSBmX2V1Y2xfZGlzdF9jZW50cm9pZHMoeCwgY2VudHJvaWRzKQogIGNsdXN0ZXJfaWQgPC0gdmVjdG9yKGxlbmd0aCA9IG5yb3cobV9kaXN0KSkKICBmb3IoaSBpbiBzZXFfYWxvbmcoY2x1c3Rlcl9pZCkpCiAgICBjbHVzdGVyX2lkW2ldIDwtIHdoaWNoLm1pbihtX2Rpc3RbaSwgXSkKICBjbHVzdGVyX2lkCn0KYGBgCgo3LiBDcmVhdGUgYSBmdW5jdGlvbiB3aGljaCBjYWxjdWxhdGVzIG5ldyBjZW50cm9pZHMgdXNpbmcgdGhlIHBvaW50cyB3aGljaCBoYXZlIGJlZW4gYXNzaWduZWQgdG8gZWFjaCBjbHVzdGVyLgpgYGB7cn0KZl9yZWNhbGN1bGF0ZV9jZW50cm9pZHMgPC0gZnVuY3Rpb24oY2x1c3Rlcl9pZHMsIHgpIHsKICBkZiA8LSB4ICU+JSAKICAgIGFzLmRhdGEuZnJhbWUoKSAlPiUgCiAgICBtdXRhdGUoY2x1c3Rlcj1jbHVzdGVyX2lkcykKICBtdSA8LSBkZiAlPiUgCiAgICBncm91cF9ieShjbHVzdGVyKSAlPiUgCiAgICBzdW1tYXJpc2VfYWxsKC5mdW5zPW1lYW4pICU+JSAKICAgIHNlbGVjdCgtY2x1c3RlcikKICBtdQp9CmBgYAoKOC4gUHV0dGluZyB5b3VyIGZ1bmN0aW9ucyB0b2dldGhlciBpbiBzZXF1ZW5jZSBjcmVhdGUgYSBmdW5jdGlvbiB0aGF0IGRvZXMgay1tZWFucyBjbHVzdGVyaW5nISBUbyBkbyB0aGlzLCBkbyB0aGUgZm9sbG93aW5nOgoKY3JlYXRlIGEgZm9yIGxvb3Agd2hlcmU6CgotIGlmIGZpcnN0IHRpbWUgcm91bmQgbG9vcCwgY2hvb3NlIHJhbmRvbSBjZW50cm9pZHMgdG8gYmUgZGF0YSBwb2ludHMgZnJvbSB0aGUgZGF0YXNldDsgaWYgc3Vic2VxdWVudCwgY2FsY3VsYXRlIGNlbnRyb2lkcyB1c2luZyB5b3VyIGZ1bmN0aW9uIHRoYXQgZGV0ZXJtaW5lcyB0aGUgY2VudHJvaWRzIG9mIGVhY2ggY2x1c3RlcgotIGNhbGN1bGF0ZXMgZGlzdGFuY2Ugb2YgYWxsIHBvaW50cyBmcm9tIGFsbCBjZW50cm9pZHMsIGFuZCBhc3NpZ25zIGNsdXN0ZXJzIHRvIHRoZSBwb2ludHMgYmFzZWQgb24gdGhlaXIgbWluaW1hbCBkaXN0YW5jZQoKRm9yIHNpbXBsaWNpdGx5LCBoZXJlIHdlIHRlcm1pbmF0ZSB0aGUgbG9vcCBhZnRlciA1MCBpdGVyYXRpb25zLgpgYGB7cn0KIyBoZXJlIEkganVzdCB1c2UgNTAgaXRlcmF0aW9ucyBhcyBhIHN0b3BwaW5nIGNyaXRlcmlhCiMgYmV0dGVyIHRvIGxvb2sgYXQgY2x1c3RlciBpZGVudGl0aWVzIGFuZCBvbmx5IHN0b3AKIyBvbmNlIHRoZXNlIHN0b3AgY2hhbmdpbmcKZl9rbWVhbnMgPC0gZnVuY3Rpb24oeCwgaywgbml0ZXI9NTApIHsKICBmb3IoaSBpbiAxOm5pdGVyKSB7CiAgICBpZihpID09IDEpCiAgICAgIGNlbnRyb2lkcyA8LSBmX2Nob29zZV9yYW5kb21fY2VudHJvaWRzKHgsIGspCiAgICBlbHNlCiAgICAgIGNlbnRyb2lkcyA8LSBmX3JlY2FsY3VsYXRlX2NlbnRyb2lkcyhjbHVzdGVyX2lkcywgeCkKICAgIGNsdXN0ZXJfaWRzIDwtIGZfY2x1c3Rlcih4LCBjZW50cm9pZHMpCiAgfQogIGNsdXN0ZXJfaWRzCn0KYGBgCgo5LiBVc2luZyAkaz0zJCBjbHVzdGVycywgdXNlIHlvdXIgay1tZWFucyBjbHVzdGVyaW5nIGZ1bmN0aW9uIHRvIGRldGVybWluZSBjbHVzdGVyIGlkcy4KYGBge3J9CmNsdXN0ZXJzIDwtIGZfa21lYW5zKHgsIDMpCmBgYAoKMTAuIEhvdyBkbyB5b3VyIGNsdXN0ZXJzIGNvcnJlc3BvbmQgdG8gc3BlY2llcz8KYGBge3J9CmRmIDwtIGlyaXMgJT4lIAogIGFzLmRhdGEuZnJhbWUoKSAlPiUgCiAgbXV0YXRlKGNsdXN0ZXI9Y2x1c3RlcnMpCnRhYmxlKGRmJFNwZWNpZXMsIGRmJGNsdXN0ZXIpCmBgYApEb2VzIGEgcHJldHR5IGdvb2Qgam9iIG9mIHNlcGFyYXRpbmcgb3V0IHRoZSB0aHJlZSBzcGVjaWVzLiBTZXRvc2EgaXMgbW9yZSBkaWZmZXJlbnQgZnJvbSB0aGUgb3RoZXIgdHdvIGNsYXNzZXMuCgoxMS4gV2hhdCBoYXBwZW5zIGlmIHlvdSBjaG9vc2Ugb25seSB0d28gY2x1c3RlcnM/CmBgYHtyfQpjbHVzdGVycyA8LSBmX2ttZWFucyh4LCAyKQpkZiA8LSBpcmlzICU+JSAKICBhcy5kYXRhLmZyYW1lKCkgJT4lIAogIG11dGF0ZShjbHVzdGVyPWNsdXN0ZXJzKQp0YWJsZShkZiRTcGVjaWVzLCBkZiRjbHVzdGVyKQpgYGAKU3BsaXRzIGRhdGEgaW4gc2V0b3NhIGFuZCBvdGhlcnMuIFRoaXMgbWFrZXMgc2Vuc2UsIHNpbmNlIGFzc3VtaW5nIDMgY2x1c3RlcnMgbWl4dHVyZWQgdXAgdGhlIHZlcnNpY29sb3IgYW5kIHZpcmdpbmljYSBkYXRhc2V0cwo=</div>
 
 
 
