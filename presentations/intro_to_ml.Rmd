@@ -14,8 +14,9 @@ output:
 ## Material covered today
 
 - what is meant by machine learning?
-- dimensionality reduction methods: PCA, t-SNE and UMAP
-- clustering
+- unsupervised versus supervised machine learning
+- unsupervised: dimensionality reduction and clustering
+- supervised: linear regression and logistic regression
 
 # What is machine learning? (At three levels of difficulty.)
 
@@ -570,135 +571,87 @@ df_temp %>%
 
 ## Questions?
 
-# Manifold learning
 
-## What is it?
+# Clustering
 
-Essentially these methods try to learn the structure of the local manifolds in the data. (Also referred to as graph-based or embedding methods.)
-
-- t-distributed stochastic nearest neighbour embedding (t-SNE)
-- uniform manifold approximation and projection (UMAP)
-
-# t-distributed stochastic nearest neighbour embedding
-
-## High level detail
-
-- original data in "data space" of dimensions $\mathbb{R}^k$, where $k$ is quite large
-- t-SNE transforms data non-linearly to a "map space" of dimensions $\mathbb{R}^2$ or $\mathbb{R}^3$ typically
-- constructs the mapping such that points close in "data space" are also close in "map space"
-
-## Mapping tries to preserves local neighbours
-```{r, echo = FALSE, out.width = "1000px",fig.align="center"}
-  knitr::include_graphics("figures/t-sne_map_vs_data.png")
-```
-
-## Similarity in data space: fuzzy neighbours
-
-- imagine a Gaussian density around each point and define a conditional similarity:
-
-\begin{equation}
-p_{j|i} = \frac{\exp(-|x_i-x_j|^2/2\sigma_i^2)}{\sum_{k\neq i} \exp(-|x_i-x_k|^2/2\sigma_i^2)}
-\end{equation}
-
-where $\sigma_i$ is different for each point: points in dense areas given smaller variance than those in sparse areas
-
-- $p_{j|i}$ measures the probability that $x_i$ would pick $x_j$ as its neighbour
-
-## Symmetrised similarity
-
-Need a distance metric, so define:
-
-\begin{equation}
-p_{ij} = \frac{1}{N} (p_{j|i} + p_{i|j})
-\end{equation}
-
-yielding a similarity matrix with elements $p_{ij}$
-
-## Similarity in map space
-
-Uses Student-t distribution with one degree of freedom (the Cauchy):
-
-\begin{equation}
-q_{ij} = \frac{1/(1+|z_i-z_j|^2)}{\sum_{k\neq i} 1/(1+|z_i-z_k|^2)}
-\end{equation}
-
-## How to choose $z_i$?
-
+## What does clustering aim to achieve?
 ```{r, echo = FALSE, out.width = "800px",fig.align="center"}
-  knitr::include_graphics("figures/t-sne_similarity.png")
+  knitr::include_graphics("figures/unsupervised_5.png")
 ```
 
-## Algorithm to choose $z_i$
+## K-means clustering
+idea:
 
-We can calculate the Kullback-Leibler divergence (not a distance!) from $p_{ij}\rightarrow q_{ij}$:
+- set number of clusters, $k$, a priori
+- determine cluster centres such that distances of points within clusters to centres is minimised
 
-\begin{equation}
-\text{KL} = \sum_{i,j} p_{ij} \log \frac{p_{ij}}{q_{ij}}
-\end{equation}
 
-Minimise via gradient descent using $\frac{\partial \text{KL}}{\partial z_i}$
+## K-means clustering
+```{r, echo = FALSE, out.width = "600px",fig.align="center"}
+  knitr::include_graphics("figures/k-means.png")
+```
 
-## Picking $\sigma_i$
+## How to achieve k-means
 
-- more uncertainty (i.e. entropy) if $\sigma_i\uparrow$
-- user specifies a "perplexity" hyperparameter which effectively determines number of nearest neighbours
-- t-SNE chooses $\sigma_i$ to meet this perplexity for each data point
+1. randomly select $k$ data points and make these the centres
+2. determine distance of all points from each of the centres
+3. assign clusters to nearest centres
+4. calculate new centres as means of points within each cluster
+5. repeat 2-4 until clusters stop changing (or max iterations reached)
 
-## Applying t-SNE to wine data
 
-## Perplexity=1
+## Problem with k-means
 ```{r, echo = FALSE, warning=FALSE, message=FALSE}
-df <- readRDS("data/winemag-data_first150k_10000_processed.rds") %>%
-  filter(country %in% c("Italy", "France", "Germany")) %>%
-  droplevels()
-x <- df %>%
-  select(price, points, contains("desc_")) %>%
-  unique()
-df <- df[as.numeric(row.names(x)), ]
-# library(Rtsne)
-# tsne <- Rtsne(x, dims=2, perplexity=1, verbose=FALSE, max_iter = 500)
-# saveRDS(tsne, "tsne_wine_1.rds")
-tsne <- readRDS("data/tsne_wine_1.rds")
-scores <- tsne$Y
-colnames(scores) <- map_chr(1:2, ~paste0("Dim.", .))
-df_temp <- df %>% cbind(scores)
-df_temp %>% 
-  ggplot(aes(x=Dim.1, y=Dim.2, colour=country)) +
+f_line <- function(n, r, theta, sigma_theta) {
+  r <- runif(n, 0, r)
+  u_theta <- rnorm(n, 0, sigma_theta)
+  theta <- theta + u_theta
+  x <- r * cos(theta)
+  y <- r * sin(theta)
+  return(tibble(x, y))
+}
+
+df_star <- f_line(100, 5, pi/4, 0.1) %>% 
+  bind_rows(f_line(100, 5, pi/2, 0.1)) %>% 
+  bind_rows(f_line(100, 5, 3 * pi/4, 0.1)) %>% 
+  bind_rows(f_line(100, 5, 4 * pi/4, 0.1)) %>% 
+  bind_rows(f_line(100, 5, 5 * pi/4, 0.1)) %>% 
+  bind_rows(f_line(100, 5, 6 * pi/4, 0.1)) %>% 
+  bind_rows(f_line(100, 5, 7 * pi/4, 0.1)) %>% 
+  bind_rows(f_line(100, 5, 8 * pi/4, 0.1))
+df_star %>% 
+  ggplot(aes(x=x, y=y)) +
   geom_point() +
-  theme(legend.text = element_text(size=16),
-        legend.title = element_text(size=16))
+  theme(axis.line=element_blank(),axis.text.x=element_blank(),
+          axis.text.y=element_blank(),axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),legend.position="none",
+          panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),plot.background=element_blank())
 ```
 
-## Perplexity: 100
+## Problem with k-means
 ```{r, echo = FALSE, warning=FALSE, message=FALSE}
-# library(Rtsne)
-# tsne <- Rtsne(x, dims=2, perplexity=100, verbose=FALSE, max_iter = 500)
-# saveRDS(tsne, "data/tsne_wine_100.rds")
-tsne <- readRDS("data/tsne_wine_100.rds")
-scores <- tsne$Y
-colnames(scores) <- map_chr(1:2, ~paste0("Dim.", .))
-df_temp <- df %>% cbind(scores)
-df_temp %>% 
-  ggplot(aes(x=Dim.1, y=Dim.2, colour=country)) +
+fit <- kmeans(df_star, 8)
+df_star1 <- df_star %>% 
+  mutate(cluster=fit$cluster)
+
+df_star1 %>% 
+  ggplot(aes(x=x, y=y, colour=as.factor(cluster))) +
   geom_point() +
-  theme(legend.text = element_text(size=16),
-        legend.title = element_text(size=16))
+  theme(axis.line=element_blank(),axis.text.x=element_blank(),
+          axis.text.y=element_blank(),axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),legend.position="none",
+          panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),plot.background=element_blank())
 ```
 
-# Summary
+## Problem with k-means
 
-## Summary
-
-- unsupervised and supervised learning aim to achieve different goals
-- dimensionality reduction is one variety of unsupervised learning
-- PCA is a linear projection method
-- t-SNE and UMAP are (non-linear) manifold learning methods that can better approximate lower dimensional approximations
-
-## Summary
-
-- clustering methods can reduce data down to a single dimension
-- k-means works for simple datasets
-- GMMs are model-based and more general (but still have flaws)
+- assumes data spherical (i.e. a multivariate Gaussian with diagonal covariance matrix)
+- requires hard-coded number of clusters
+- non-model based so hard to determine optimal number of clusters
 
 # Supervised ML
 
@@ -710,39 +663,7 @@ df_temp %>%
   knitr::include_graphics("figures/supervised-regression-1.png")
 ```
 
-## Probabilistic model
-
-Suppose
-
-\begin{equation}
-y_i|x_i \sim \mathcal{N}(\alpha + \beta x_i, \sigma),
-\end{equation}
-
-where $(\alpha, \beta, \sigma)$ are parameters to be learned
-
-## What does this model look like?
-
-```{r, echo = FALSE, out.width = "1000px",fig.align="center"}
-  knitr::include_graphics("figures/supervised-regression-2.png")
-```
-
-## How to estimate model?
-
-assume $\boldsymbol{y}=(y_1,y_2,...,y_K)$ and $\boldsymbol{x}=(x_1,x_2,...,x_K)$ 
-
-\begin{equation}
-p(\alpha,\beta,\sigma|\boldsymbol{y},\boldsymbol{x}) \propto p(\boldsymbol{y}|\boldsymbol{x},\alpha, \beta,\sigma) p(\alpha,\beta,\sigma)
-\end{equation}
-
-use these to determine posterior predictive distribution describing new $\tilde{\boldsymbol{y}}$ for given (new) $\tilde{\boldsymbol{x}}$:
-
-\begin{equation}
-p(\tilde{\boldsymbol{y}}|\tilde{\boldsymbol{x}}) = \int p(\tilde{\boldsymbol{y}}|\tilde{\boldsymbol{x}},\alpha, \beta,\sigma) p(\alpha,\beta,\sigma|\boldsymbol{y},\boldsymbol{x}) d\alpha\;d\beta\;d\sigma
-\end{equation}
-
-typically would be done via Markov chain Monte Carlo
-
-## Alternative (non-probabilistic) model
+## Non-probabilistic model
 
 \begin{equation}
 y_i = \alpha + \beta x_i + \epsilon_i
@@ -786,16 +707,8 @@ until $\alpha$ and $\beta$ no longer change. $\eta$ is the learning rate
 
 ## Linear regression with polynomial terms
 
-alternative model:
-
 \begin{equation}
-y_i|x_i \sim \mathcal{N}(f_p(x_i), \sigma),
-\end{equation}
-
-where
-
-\begin{equation}
-f_p(x_i) = \theta_0 + \theta_1 x_i + \theta_2 x_i^2 + ... + \theta_p x_i^p
+y_i = \theta_0 + \theta_1 x_i + \theta_2 x_i^2 + ... + \theta_p x_i^p + \epsilon_i
 \end{equation}
 
 model is better able to fit more complex datasets
@@ -819,14 +732,14 @@ model is better able to fit more complex datasets
 
 ## Solutions
 
-- need a separate validation set (more this afternoon) to test model predictions on
+- need a separate validation set to test model predictions on
 - regularisation can help too, yielding a new objective function:
 
 \begin{equation}
 L = C||\theta||_q + \frac{1}{K} \sum_{i=1}^{K} (y_i - f_p(x_i))^2
 \end{equation}
 
-where $||.||_q$ denotes the $Lq$ norm: different choices can yield very different estimates
+where $||.||_q$ denotes the $L_q$ norm: different choices can yield very different estimates
 
 ## Linear regression summary
 
@@ -884,16 +797,10 @@ In logistic regression, we use logistic function:
 assume data are i.i.d., the likelihood is:
 
 \begin{equation}
-L=p(\boldsymbol{y}|\beta,\boldsymbol{x}) = \prod_{i=1}^{K} f_\beta(x_i)^{y_i} (1 - f_\beta(x_i))^{1 - y_i}
+L=p(\boldsymbol{y}|\beta,\boldsymbol{x}) = \prod_{i=1}^{K} f_\beta(x_i)^{y_i} (1 - f_\beta(x_i))^{1 - y_i}.
 \end{equation}
 
-setting priors, we have a Bayesian model:
-
-\begin{equation}
-p(\beta|\boldsymbol{x}, \boldsymbol{y}) \propto p(\beta) p(\boldsymbol{y}|\beta,\boldsymbol{x})
-\end{equation}
-
-so can use (say) Markov chain Monte Carlo to estimate model with uncertainty. Frequentists use gradient descent to find maximum likelihood estimates instead
+Can use gradient descent to find maximum likelihood estimates (or estimate using Bayesian inference).
 
 ## Multivariate logistic regression
 
@@ -949,3 +856,23 @@ meaning (say) $\beta_1$ represents the change in log-odds for a one unit change 
 ---
 
 
+
+
+# Summary
+
+## Summary
+
+- unsupervised and supervised learning aim to achieve different goals
+- dimensionality reduction is one variety of unsupervised learning
+- PCA is a linear projection method
+
+## Summary
+
+- clustering methods can reduce data down to a single dimension
+- k-means works for simple datasets
+
+## Summary
+- supervised ML uses labelled data to make predictions
+- linear regression is a form of regression model
+- model with more parameters are likely to overfit more
+- logistic regression is a binary classifier

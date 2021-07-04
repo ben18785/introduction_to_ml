@@ -1,0 +1,179 @@
+---
+title: "Problem sheet: unsupervised learning"
+output: html_notebook
+---
+
+```{r}
+rm(list=ls())
+library(tidyverse)
+library(reshape2)
+```
+
+
+# Maths
+
+1. Suppose $X\in \mathbb{R}^{n\times k}$ has rows ($x_i'$) that correspond to individual observations of a system, such that $x_i\sim\mathcal{N}(0,\Sigma)$. Why does $\widehat \Sigma = \frac{1}{n} X'X$ seem a reasonable estimator of $\Sigma$?
+
+$\frac{1}{n} X'X = \frac{1}{n} \sum_{i=1}^n x_i x_i'$
+
+The summed term: $\mathbb{E}[x_i x_i']=\Sigma$ because this is the definition of the covariance matrix. So, $\frac{1}{n}\sum_{i=1}^n x_i x_i'$ is the law or large numbers estimate of this (which also corresponds to the method of moments estimator and the maximum likelihood estimator). (It turns out this estimator is actually biased, so $\frac{1}{n-1} X'X$ is used in practice.)
+
+2. We transform the system according to $Y=X A'$ where $A\in\mathbb{R}^{k\times k}$. Find the distribution of a row of $Y$ (we call $y_i'$).
+
+We can write $y_i=Ax_i$ which has variance $\mathbb{E}(y_i y_i') = \mathbb{E}(A x_i x_i' A') = A \mathbb{E}(x_i x_i') A' = A\Sigma A'$. Because a normal multiplied by a linear factor is still a normal, we have:
+
+$y_i\sim\mathcal{N}(0,A\Sigma A')$
+
+3. Show that choosing $A'$ to have eigenvectors of $\Sigma$ as its columns results in a diagonal covariance matrix in the transformed system.
+
+A covariance matrix is eigendecomposed as:
+
+$\Sigma = A' D A$,
+
+where $A'$ is orthogonal (meaning $A A'=I$) and contains eigenvectors as columns and $D$ contains corresponding eigenvalues.
+
+We can then write: $A\Sigma A=A A' D A A'=D$.
+
+4. In the transformed system, what are the estimates of the variance of each dimension?
+
+The variance contributed by a given dimension is just the diagonal element of $D$, which corresponds to the eigenvalues of $\Sigma$.
+
+# Iris data
+1. Load the iris data. Write a k-means algorithm from scratch and use it to cluster the points assuming 3 clusters. Use the Euclidean distance metric.
+```{r}
+x <- iris %>% 
+  select(-Species)
+
+# choose number of clusters, k
+f_choose_random_centroids <- function(x, k=3) {
+  idxs <- 1:nrow(x)
+  idxs <- sample(idxs, k)
+  return(x[idxs, ])
+}
+
+# assign points to nearest centroid
+f_eucl_dist <- function(x1, x2) {return(sqrt(sum((x1 - x2)^2)))}
+f_eucl_dist_all <- function(x, centroid) {
+  return(map_dbl(seq(1, nrow(x), 1), ~f_eucl_dist(centroid, x[., ])))
+}
+f_eucl_dist_centroids <- function(x, centroids) {
+  m_dist <- matrix(nrow = nrow(x), ncol = nrow(centroids))
+  for(i in 1:nrow(centroids))
+    m_dist[, i] <- f_eucl_dist_all(x, centroids[i, ])
+  return(m_dist)
+}
+f_cluster <- function(x, centroids) {
+  m_dist <- f_eucl_dist_centroids(x, centroids)
+  cluster_id <- vector(length = nrow(m_dist))
+  for(i in seq_along(cluster_id))
+    cluster_id[i] <- which.min(m_dist[i, ])
+  return(cluster_id)
+}
+
+# recalculate centroids based on clusters
+f_recalculate_centroids <- function(cluster_ids, x) {
+  df <- x %>% 
+    as.data.frame() %>% 
+    mutate(cluster=cluster_ids)
+  mu <- df %>% 
+    group_by(cluster) %>% 
+    summarise_all(.funs=mean) %>% 
+    select(-cluster)
+  return(mu)  
+}
+
+# here I just use 50 iterations as a stopping criteria
+# better to look at cluster identities and only stop
+# once these stop changing
+f_kmeans <- function(x, k, niter=50) {
+  for(i in 1:niter) {
+    if(i == 1)
+      centroids <- f_choose_random_centroids(x, k)
+    else
+      centroids <- f_recalculate_centroids(cluster_ids, x)
+    cluster_ids <- f_cluster(x, centroids)
+  }
+  return(cluster_ids)
+}
+
+clusters <- f_kmeans(x, 3)
+```
+
+2. How do your clusters correspond to species?
+```{r}
+df <- iris %>% 
+  as.data.frame() %>% 
+  mutate(cluster=clusters)
+table(df$Species, df$cluster)
+```
+Does a pretty good job of separating out the three species. Setosa is more different from the other two classes.
+
+3. What happens if you choose only two clusters?
+```{r}
+clusters <- f_kmeans(x, 2)
+df <- iris %>% 
+  as.data.frame() %>% 
+  mutate(cluster=clusters)
+table(df$Species, df$cluster)
+```
+Splits data in setosa and others. Makes sense, since assuming 3 clusters mixtured up the versicolor and virginica datasets
+
+4. Use PCA to project the data onto the first two principal components. Does this separate out species? What do these two components mean?
+```{r}
+# first check for normality -- not perfect due to multimodality
+iris %>% 
+  melt(id.vars="Species") %>% 
+  ggplot(aes(x=value)) +
+  geom_histogram() +
+  facet_wrap(~variable)
+
+# do PCA
+x <- iris %>% 
+  select(-Species)
+pca <- prcomp(x)
+df <- iris %>% 
+  cbind(pca$x)
+df %>% 
+  ggplot(aes(x=PC1, y=PC2, colour=as.factor(Species))) +
+  geom_point()
+
+# loadings
+pca$rotation[, 1:2] %>% 
+  as.data.frame() %>% 
+  rownames_to_column() %>% 
+  melt(id.vars="rowname") %>% 
+  ggplot(aes(x=rowname, y=value)) +
+  geom_col() +
+  coord_flip() +
+  facet_grid(~variable)
+```
+
+5. Use tsne to reduce the dimensionality of the data, and visualise the points in two dimensions. How well does the dimensionality reduction separate out the species? How does this vary as a function of the chosen perplexity?
+```{r}
+df <- df %>% unique()
+x <- x %>% unique()
+# Perplexity=2
+tsne <- Rtsne::Rtsne(x %>% unique(), perplexity=2)
+scores <- tsne$Y
+colnames(scores) <- map_chr(1:2, ~paste0("Dim.", .))
+df_temp <- df %>% cbind(scores)
+
+df_temp %>% 
+  ggplot(aes(x=Dim.1, y=Dim.2, colour=Species)) +
+  geom_point() +
+  theme(legend.text = element_text(size=16),
+        legend.title = element_text(size=16))
+
+# Perplexity=40
+tsne <- Rtsne::Rtsne(x %>% unique(), perplexity=40)
+scores <- tsne$Y
+colnames(scores) <- map_chr(1:2, ~paste0("Dim.", .))
+df_temp <- df %>% cbind(scores)
+
+df_temp %>% 
+  ggplot(aes(x=Dim.1, y=Dim.2, colour=Species)) +
+  geom_point() +
+  theme(legend.text = element_text(size=16),
+        legend.title = element_text(size=16))
+```
+
