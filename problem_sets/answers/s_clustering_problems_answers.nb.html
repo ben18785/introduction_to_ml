@@ -256,77 +256,138 @@ iris</code></pre>
 </ol>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9jaG9vc2VfcmFuZG9tX2NlbnRyb2lkcyA8LSBmdW5jdGlvbih4LCBrPTMpIHtcbiAgaWR4cyA8LSAxOm5yb3coeClcbiAgaWR4cyA8LSBzYW1wbGUoaWR4cywgaylcbiAgeFtpZHhzLCBdXG59XG5gYGAifQ== -->
-<pre class="r"><code>f_choose_random_centroids &lt;- function(x, k=3) {
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZl9jaG9vc2VfcmFuZG9tX2NlbnRyb2lkcyA8LSBmdW5jdGlvbih4LCBrPTMpIHtcbiAgaWR4cyA8LSAxOm5yb3coeClcbiAgaWR4cyA8LSBzYW1wbGUoaWR4cywgaylcbiAgeFtpZHhzLCBdXG59XG5gYGBcbmBgYCJ9 -->
+<pre class="r"><code>```r
+f_choose_random_centroids &lt;- function(x, k=3) {
   idxs &lt;- 1:nrow(x)
   idxs &lt;- sample(idxs, k)
   x[idxs, ]
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="3" style="list-style-type: decimal">
-<li>Write a function which calculates the Euclidean distance between two points.</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9ldWNsX2Rpc3QgPC0gZnVuY3Rpb24oeDEsIHgyKSB7XG4gIHNxcnQoc3VtKCh4MSAtIHgyKV4yKSlcbn1cbmBgYCJ9 -->
-<pre class="r"><code>f_eucl_dist &lt;- function(x1, x2) {
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+3. Write a function which calculates the Euclidean distance between two points.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZl9ldWNsX2Rpc3QgPC0gZnVuY3Rpb24oeDEsIHgyKSB7XG4gIHNxcnQoc3VtKCh4MSAtIHgyKV4yKSlcbn1cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+f_eucl_dist &lt;- function(x1, x2) {
   sqrt(sum((x1 - x2)^2))
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="4" style="list-style-type: decimal">
-<li>Write a function which finds the distance between each row in a matrix (where each of its rows is a data point) and a centroid.</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9ldWNsX2Rpc3RfYWxsIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkKSB7XG4gIG1hcF9kYmwoc2VxKDEsIG5yb3coeCksIDEpLCB+Zl9ldWNsX2Rpc3QoY2VudHJvaWQsIHhbLiwgXSkpXG59XG5gYGAifQ== -->
-<pre class="r"><code>f_eucl_dist_all &lt;- function(x, centroid) {
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+4. Write a function which finds the distance between each row in a matrix (where each of its rows is a data point) and a centroid.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZl9ldWNsX2Rpc3RfYWxsIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkKSB7XG4gIG1hcF9kYmwoc2VxKDEsIG5yb3coeCksIDEpLCB+Zl9ldWNsX2Rpc3QoY2VudHJvaWQsIHhbLiwgXSkpXG59XG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+f_eucl_dist_all &lt;- function(x, centroid) {
   map_dbl(seq(1, nrow(x), 1), ~f_eucl_dist(centroid, x[., ]))
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="5" style="list-style-type: decimal">
-<li>Write a function which finds the distance between each row in a matrix (where each of its rows is a data point) and a list of centroids. It may be easiest to return these distances in a matrix, where each row corresponds to a data point and each column to a centroid.</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9ldWNsX2Rpc3RfY2VudHJvaWRzIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykge1xuICBtX2Rpc3QgPC0gbWF0cml4KG5yb3cgPSBucm93KHgpLCBuY29sID0gbnJvdyhjZW50cm9pZHMpKVxuICBmb3IoaSBpbiAxOm5yb3coY2VudHJvaWRzKSlcbiAgICBtX2Rpc3RbLCBpXSA8LSBmX2V1Y2xfZGlzdF9hbGwoeCwgY2VudHJvaWRzW2ksIF0pXG4gIG1fZGlzdFxufVxuYGBgIn0= -->
-<pre class="r"><code>f_eucl_dist_centroids &lt;- function(x, centroids) {
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+5. Write a function which finds the distance between each row in a matrix (where each of its rows is a data point) and a list of centroids. It may be easiest to return these distances in a matrix, where each row corresponds to a data point and each column to a centroid.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZl9ldWNsX2Rpc3RfY2VudHJvaWRzIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykge1xuICBtX2Rpc3QgPC0gbWF0cml4KG5yb3cgPSBucm93KHgpLCBuY29sID0gbnJvdyhjZW50cm9pZHMpKVxuICBmb3IoaSBpbiAxOm5yb3coY2VudHJvaWRzKSlcbiAgICBtX2Rpc3RbLCBpXSA8LSBmX2V1Y2xfZGlzdF9hbGwoeCwgY2VudHJvaWRzW2ksIF0pXG4gIG1fZGlzdFxufVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+f_eucl_dist_centroids &lt;- function(x, centroids) {
   m_dist &lt;- matrix(nrow = nrow(x), ncol = nrow(centroids))
   for(i in 1:nrow(centroids))
     m_dist[, i] &lt;- f_eucl_dist_all(x, centroids[i, ])
   m_dist
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="6" style="list-style-type: decimal">
-<li>Write a function which assigns each data point to a cluster according to its nearest centroid. The function should return a list of centroid ids: one per each data point.</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9jbHVzdGVyIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykge1xuICBtX2Rpc3QgPC0gZl9ldWNsX2Rpc3RfY2VudHJvaWRzKHgsIGNlbnRyb2lkcylcbiAgY2x1c3Rlcl9pZCA8LSB2ZWN0b3IobGVuZ3RoID0gbnJvdyhtX2Rpc3QpKVxuICBmb3IoaSBpbiBzZXFfYWxvbmcoY2x1c3Rlcl9pZCkpXG4gICAgY2x1c3Rlcl9pZFtpXSA8LSB3aGljaC5taW4obV9kaXN0W2ksIF0pXG4gIGNsdXN0ZXJfaWRcbn1cbmBgYCJ9 -->
-<pre class="r"><code>f_cluster &lt;- function(x, centroids) {
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+6. Write a function which assigns each data point to a cluster according to its nearest centroid. The function should return a list of centroid ids: one per each data point.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZl9jbHVzdGVyIDwtIGZ1bmN0aW9uKHgsIGNlbnRyb2lkcykge1xuICBtX2Rpc3QgPC0gZl9ldWNsX2Rpc3RfY2VudHJvaWRzKHgsIGNlbnRyb2lkcylcbiAgY2x1c3Rlcl9pZCA8LSB2ZWN0b3IobGVuZ3RoID0gbnJvdyhtX2Rpc3QpKVxuICBmb3IoaSBpbiBzZXFfYWxvbmcoY2x1c3Rlcl9pZCkpXG4gICAgY2x1c3Rlcl9pZFtpXSA8LSB3aGljaC5taW4obV9kaXN0W2ksIF0pXG4gIGNsdXN0ZXJfaWRcbn1cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+f_cluster &lt;- function(x, centroids) {
   m_dist &lt;- f_eucl_dist_centroids(x, centroids)
   cluster_id &lt;- vector(length = nrow(m_dist))
   for(i in seq_along(cluster_id))
     cluster_id[i] &lt;- which.min(m_dist[i, ])
   cluster_id
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="7" style="list-style-type: decimal">
-<li>Create a function which calculates new centroids using the points which have been assigned to each cluster.</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZl9yZWNhbGN1bGF0ZV9jZW50cm9pZHMgPC0gZnVuY3Rpb24oY2x1c3Rlcl9pZHMsIHgpIHtcbiAgZGYgPC0geCAlPiUgXG4gICAgYXMuZGF0YS5mcmFtZSgpICU+JSBcbiAgICBtdXRhdGUoY2x1c3Rlcj1jbHVzdGVyX2lkcylcbiAgbXUgPC0gZGYgJT4lIFxuICAgIGdyb3VwX2J5KGNsdXN0ZXIpICU+JSBcbiAgICBzdW1tYXJpc2VfYWxsKC5mdW5zPW1lYW4pICU+JSBcbiAgICBzZWxlY3QoLWNsdXN0ZXIpXG4gIG11XG59XG5gYGAifQ== -->
-<pre class="r"><code>f_recalculate_centroids &lt;- function(cluster_ids, x) {
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+7. Create a function which calculates new centroids using the points which have been assigned to each cluster.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZl9yZWNhbGN1bGF0ZV9jZW50cm9pZHMgPC0gZnVuY3Rpb24oY2x1c3Rlcl9pZHMsIHgpIHtcbiAgZGYgPC0geCAlPiUgXG4gICAgYXMuZGF0YS5mcmFtZSgpICU+JSBcbiAgICBtdXRhdGUoY2x1c3Rlcj1jbHVzdGVyX2lkcylcbiAgbXUgPC0gZGYgJT4lIFxuICAgIGdyb3VwX2J5KGNsdXN0ZXIpICU+JSBcbiAgICBzdW1tYXJpc2VfYWxsKC5mdW5zPW1lYW4pICU+JSBcbiAgICBzZWxlY3QoLWNsdXN0ZXIpXG4gIG11XG59XG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+f_recalculate_centroids &lt;- function(cluster_ids, x) {
   df &lt;- x %&gt;% 
     as.data.frame() %&gt;% 
     mutate(cluster=cluster_ids)
@@ -336,22 +397,35 @@ iris</code></pre>
     select(-cluster)
   mu
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="8" style="list-style-type: decimal">
-<li>Putting your functions together in sequence create a function that does k-means clustering! To do this, do the following:</li>
-</ol>
-<p>create a for loop where:</p>
-<ul>
-<li>if first time round loop, choose random centroids to be data points from the dataset; if subsequent, calculate centroids using your function that determines the centroids of each cluster</li>
-<li>calculates distance of all points from all centroids, and assigns clusters to the points based on their minimal distance</li>
-</ul>
-<p>For simplicitly, here we terminate the loop after 50 iterations.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBoZXJlIEkganVzdCB1c2UgNTAgaXRlcmF0aW9ucyBhcyBhIHN0b3BwaW5nIGNyaXRlcmlhXG4jIGJldHRlciB0byBsb29rIGF0IGNsdXN0ZXIgaWRlbnRpdGllcyBhbmQgb25seSBzdG9wXG4jIG9uY2UgdGhlc2Ugc3RvcCBjaGFuZ2luZ1xuZl9rbWVhbnMgPC0gZnVuY3Rpb24oeCwgaywgbml0ZXI9NTApIHtcbiAgZm9yKGkgaW4gMTpuaXRlcikge1xuICAgIGlmKGkgPT0gMSlcbiAgICAgIGNlbnRyb2lkcyA8LSBmX2Nob29zZV9yYW5kb21fY2VudHJvaWRzKHgsIGspXG4gICAgZWxzZVxuICAgICAgY2VudHJvaWRzIDwtIGZfcmVjYWxjdWxhdGVfY2VudHJvaWRzKGNsdXN0ZXJfaWRzLCB4KVxuICAgIGNsdXN0ZXJfaWRzIDwtIGZfY2x1c3Rlcih4LCBjZW50cm9pZHMpXG4gIH1cbiAgY2x1c3Rlcl9pZHNcbn1cbmBgYCJ9 -->
-<pre class="r"><code># here I just use 50 iterations as a stopping criteria
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+8. Putting your functions together in sequence create a function that does k-means clustering! To do this, do the following:
+
+create a for loop where:
+
+- if first time round loop, choose random centroids to be data points from the dataset; if subsequent, calculate centroids using your function that determines the centroids of each cluster
+- calculates distance of all points from all centroids, and assigns clusters to the points based on their minimal distance
+
+For simplicitly, here we terminate the loop after 50 iterations.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBoZXJlIEkganVzdCB1c2UgNTAgaXRlcmF0aW9ucyBhcyBhIHN0b3BwaW5nIGNyaXRlcmlhXG4jIGJldHRlciB0byBsb29rIGF0IGNsdXN0ZXIgaWRlbnRpdGllcyBhbmQgb25seSBzdG9wXG4jIG9uY2UgdGhlc2Ugc3RvcCBjaGFuZ2luZ1xuZl9rbWVhbnMgPC0gZnVuY3Rpb24oeCwgaywgbml0ZXI9NTApIHtcbiAgZm9yKGkgaW4gMTpuaXRlcikge1xuICAgIGlmKGkgPT0gMSlcbiAgICAgIGNlbnRyb2lkcyA8LSBmX2Nob29zZV9yYW5kb21fY2VudHJvaWRzKHgsIGspXG4gICAgZWxzZVxuICAgICAgY2VudHJvaWRzIDwtIGZfcmVjYWxjdWxhdGVfY2VudHJvaWRzKGNsdXN0ZXJfaWRzLCB4KVxuICAgIGNsdXN0ZXJfaWRzIDwtIGZfY2x1c3Rlcih4LCBjZW50cm9pZHMpXG4gIH1cbiAgY2x1c3Rlcl9pZHNcbn1cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+# here I just use 50 iterations as a stopping criteria
 # better to look at cluster identities and only stop
 # once these stop changing
 f_kmeans &lt;- function(x, k, niter=50) {
@@ -364,58 +438,96 @@ f_kmeans &lt;- function(x, k, niter=50) {
   }
   cluster_ids
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="9" style="list-style-type: decimal">
-<li>Using <span class="math inline">\(k=3\)</span> clusters, use your k-means clustering function to determine cluster ids.</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2x1c3RlcnMgPC0gZl9rbWVhbnMoeCwgMylcbmBgYCJ9 -->
-<pre class="r"><code>clusters &lt;- f_kmeans(x, 3)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ol start="10" style="list-style-type: decimal">
-<li>How do your clusters correspond to species?</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYgPC0gaXJpcyAlPiUgXG4gIGFzLmRhdGEuZnJhbWUoKSAlPiUgXG4gIG11dGF0ZShjbHVzdGVyPWNsdXN0ZXJzKVxudGFibGUoZGYkU3BlY2llcywgZGYkY2x1c3RlcilcbmBgYCJ9 -->
-<pre class="r"><code>df &lt;- iris %&gt;% 
-  as.data.frame() %&gt;% 
-  mutate(cluster=clusters)
-table(df$Species, df$cluster)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgXG4gICAgICAgICAgICAgIDEgIDIgIDNcbiAgc2V0b3NhICAgICAgMCA1MCAgMFxuICB2ZXJzaWNvbG9yICAzICAwIDQ3XG4gIHZpcmdpbmljYSAgMzYgIDAgMTRcbiJ9 -->
-<pre><code>            
-              1  2  3
-  setosa      0 50  0
-  versicolor  3  0 47
-  virginica  36  0 14</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Does a pretty good job of separating out the three species. Setosa is more different from the other two classes.</p>
-<ol start="11" style="list-style-type: decimal">
-<li>What happens if you choose only two clusters?</li>
-</ol>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2x1c3RlcnMgPC0gZl9rbWVhbnMoeCwgMilcbmRmIDwtIGlyaXMgJT4lIFxuICBhcy5kYXRhLmZyYW1lKCkgJT4lIFxuICBtdXRhdGUoY2x1c3Rlcj1jbHVzdGVycylcbnRhYmxlKGRmJFNwZWNpZXMsIGRmJGNsdXN0ZXIpXG5gYGAifQ== -->
-<pre class="r"><code>clusters &lt;- f_kmeans(x, 2)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+9. Using $k=3$ clusters, use your k-means clustering function to determine cluster ids.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuY2x1c3RlcnMgPC0gZl9rbWVhbnMoeCwgMylcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+clusters &lt;- f_kmeans(x, 3)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+10. How do your clusters correspond to species?
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGYgPC0gaXJpcyAlPiUgXG4gIGFzLmRhdGEuZnJhbWUoKSAlPiUgXG4gIG11dGF0ZShjbHVzdGVyPWNsdXN0ZXJzKVxudGFibGUoZGYkU3BlY2llcywgZGYkY2x1c3RlcilcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
 df &lt;- iris %&gt;% 
   as.data.frame() %&gt;% 
   mutate(cluster=clusters)
 table(df$Species, df$cluster)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgXG4gICAgICAgICAgICAgIDEgIDJcbiAgc2V0b3NhICAgICAgMCA1MFxuICB2ZXJzaWNvbG9yIDQ3ICAzXG4gIHZpcmdpbmljYSAgNTAgIDBcbiJ9 -->
-<pre><code>            
-              1  2
-  setosa      0 50
-  versicolor 47  3
-  virginica  50  0</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgXG4gICAgICAgICAgICAgIDEgIDIgIDNcbiAgc2V0b3NhICAgICAgMCA1MCAgMFxuICB2ZXJzaWNvbG9yICAzICAwIDQ3XG4gIHZpcmdpbmljYSAgMzYgIDAgMTRcbiJ9 --&gt;
+</code></pre>
+<pre><code>          1  2  3</code></pre>
+<p>setosa 0 50 0 versicolor 3 0 47 virginica 36 0 14</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+Does a pretty good job of separating out the three species. Setosa is more different from the other two classes.
+
+11. What happens if you choose only two clusters?
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuY2x1c3RlcnMgPC0gZl9rbWVhbnMoeCwgMilcbmRmIDwtIGlyaXMgJT4lIFxuICBhcy5kYXRhLmZyYW1lKCkgJT4lIFxuICBtdXRhdGUoY2x1c3Rlcj1jbHVzdGVycylcbnRhYmxlKGRmJFNwZWNpZXMsIGRmJGNsdXN0ZXIpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+clusters &lt;- f_kmeans(x, 2)
+df &lt;- iris %&gt;% 
+  as.data.frame() %&gt;% 
+  mutate(cluster=clusters)
+table(df$Species, df$cluster)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgXG4gICAgICAgICAgICAgIDEgIDJcbiAgc2V0b3NhICAgICAgMCA1MFxuICB2ZXJzaWNvbG9yIDQ3ICAzXG4gIHZpcmdpbmljYSAgNTAgIDBcbiJ9 --&gt;
+</code></pre>
+<pre><code>          1  2</code></pre>
+<p>setosa 0 50 versicolor 47 3 virginica 50 0 ```</p>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
