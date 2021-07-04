@@ -5,7 +5,7 @@ This course provides a short introduction to machine learning. It covers:
 - An introduction to unsupervised learning: dimensionality reduction via PCA; and clustering using k-means
 - An introduction to supervised learning: linear regression and logistic regression
 
-The course consists of a lecture and a number of problem sets. You are free to take whichever of the below seems most appealing to you:
+The course consists of a [lecture](https://htmlpreview.github.io/?https://raw.githubusercontent.com/ben18785/introduction_to_ml/main/presentations/intro_to_ml.html) and a number of problem sets. You are free to take whichever of the below seems most appealing to you:
 
 - unsupervised learning:
   - [*Clustering via k-means*](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/s_clustering_problems.nb.html). Here, participants code up their own clustering algorithm using the k-means method. The answers (written in R) to this problem set are [here](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/answers/s_clustering_problems_answers.nb.html).
