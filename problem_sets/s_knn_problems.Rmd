@@ -1,0 +1,30 @@
+---
+title: "KNN regression"
+output: html_notebook
+---
+
+In this example, we are going to write our own KNN regression model. We are going to assess it using simulated data.
+
+1. Generate $n=200$ paired $(x_i, y_i)$ data points by sampling:
+
+\begin{equation}
+x_i \sim \mathcal{N}(0, 4)
+\end{equation}
+
+and then:
+
+\begin{equation}
+y_i \sim \mathcal{N}(sin(x_i), 0.2)
+\end{equation}
+
+Visualise your samples.
+
+2. Write a function that returns the Euclidean distance of a given $x$ test value from a vector of other $x$ values.
+
+3. Write a function which takes as input a given $x$ test value and returns the indices which correspond to the k-nearest neighbours from a set of other $x$ values.
+
+4. Using your previous function, take the mean of the corresponding $y$ values of the KNN points for a given $x$ test value. This corresponds to a KNN regression function.
+
+5. For a range of $x$ corresponding to the domain of your simulated data, use your KNN regression model to predict $y$ with $k=10$.
+
+6. Try the same thing with $k=1$ and $k=100$. How does choice of $k$ influence the results?
