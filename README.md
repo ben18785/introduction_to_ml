@@ -2,7 +2,7 @@
 This course provides a short introduction to machine learning. It covers:
 
 - What is machine learning?
-- An introduction to unsupervised learning: dimensionality reduction via PCA and tSNE; clustering
+- An introduction to unsupervised learning: dimensionality reduction via PCA and tSNE; and clustering using k-means
 - An introduction to supervised learning: linear regression and logistic regression
 
 The course consists of a lecture and a number of problem sets. You are free to take whichever of the below seems most appealing to you:
