@@ -749,6 +749,156 @@ where $||.||_q$ denotes the $L_q$ norm: different choices can yield very differe
 - fitting regression with more complex functional forms can fit more complex data
 - but risks poor generalisation
 
+## Questions?
+
+# K-nearest neighbours: classification and regression
+
+## KNN
+
+- non-model-based learning algorithm
+- keeps training data in memory when making predictions, in contrast to most other methods
+- generally fast to run compared to many model-based approaches
+- straightforward premise for both classification and regression
+
+## KNN classification
+
+for new data point $\tilde x_i$:
+
+1. find $k$ nearest $x$ values from training data $(x_i, y_i)$ for $i=1,...,n$
+2. tally up the corresponding $y$ labels: $(y_1,..,y_k)$
+3. classify $\tilde x_i \rightarrow \text{mode}(y_1,..,y_k)$
+
+## KNN regression
+
+for new data point $\tilde x_i$:
+
+1. find $k$ nearest $x$ values from training data $(x_i, y_i)$ for $i=1,...,n$
+2. tally up the corresponding $y$ labels: $(y_1,..,y_k)$
+3. classify $\tilde x_i \rightarrow \text{mean}(y_1,..,y_k)$
+
+## Distance metrics
+
+many options possible. Common metrics include:
+
+- Euclidean: $s(x_1,x_2) = \sqrt{\sum_{i=1}^{D} (x_{1,i} - x_{2,i})^2}$
+- cosine similarity:
+
+\begin{equation}
+s(x_1,x_2) = \frac{x_1.x_2}{|x_1||x_2|}
+\end{equation}
+
+## Example data
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+library(RANN)
+library(tidyverse)
+n <- 200
+x <- rnorm(n, 0, 4)
+y <- sin(x) + rnorm(n, 0, 0.2)
+
+f_kk_regression <- function(x_tilde, x, y, k=10) {
+  fit <- nn2(x, c(x_tilde), k = k)
+  idxs <- fit$nn.idx[1, ]
+  return(mean(y[idxs]))
+}
+
+x_sim <- seq(-10, 10, 0.1)
+y_sim <- map_dbl(x_sim, ~f_kk_regression(., x, y))
+
+df <- tibble(x, y) %>% 
+  mutate(type="actual") %>% 
+  bind_rows(tibble(x=x_sim, y=y_sim) %>% mutate(type="regression"))
+
+p <- ggplot(df %>% filter(type=="actual"), aes(x=x, y=y)) +
+  geom_point()
+p
+```
+
+## KNN with k=10
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+ p + geom_line(data=df %>% filter(type=="regression"), colour="blue")
+```
+
+## KNN with k=1
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+y_sim <- map_dbl(x_sim, ~f_kk_regression(., x, y, k = 2))
+
+df <- tibble(x, y) %>% 
+  mutate(type="actual") %>% 
+  bind_rows(tibble(x=x_sim, y=y_sim) %>% mutate(type="regression"))
+
+p + geom_line(data=df %>% filter(type=="regression"), colour="blue")
+```
+
+## KNN with k=50
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+y_sim <- map_dbl(x_sim, ~f_kk_regression(., x, y, k = 50))
+
+df <- tibble(x, y) %>% 
+  mutate(type="actual") %>% 
+  bind_rows(tibble(x=x_sim, y=y_sim) %>% mutate(type="regression"))
+
+p + geom_line(data=df %>% filter(type=="regression"), colour="blue")
+```
+
+## Issue with KNN
+
+assume
+
+\begin{equation}
+\boldsymbol{x} \sim \mathcal{N}(0, I)
+\end{equation}
+
+where $I\in\mathbb{R}^d$. What does the distribution of Euclidean distances between points look like as $d$ changes?
+
+## Distance dists: neighbours not near in higher D
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+library(mvtnorm)
+rmvrnormND <- function(n, d){
+  return(rmvnorm(n, mean = rep(0, d)))
+}
+
+rcubeND <- function(n, d) {
+  m_vals <- runif(n * d)
+  return(matrix(m_vals, ncol = d))
+}
+
+f_dists <- function(n, d) {
+  x_2 <- rmvrnormND(n, d)
+  m_dist <- dist(x_2) %>% as.matrix()
+  return(tibble(dist=m_dist[upper.tri(m_dist, diag=FALSE)],
+                dimension=d))
+}
+
+n <- 200
+x_2 <- f_dists(n, 2)
+x_3 <- f_dists(n, 3)
+x_5 <- f_dists(n, 5)
+x_10 <- f_dists(n, 100)
+
+x_2 %>% 
+  bind_rows(x_3) %>% 
+  bind_rows(x_5) %>% 
+  bind_rows(x_10) %>% 
+  ggplot(aes(x=dist)) +
+  geom_histogram(bins=200) +
+  facet_wrap(~dimension) +
+  theme(strip.text = element_text(size=16),
+        axis.text = element_text(size=16),
+        axis.title = element_text(size=16)) +
+  xlab("Distance")
+```
+
+## KNN summary
+
+- KNN uses a simple device to do both classification and regression
+- in both cases taken the $k$ closest points to choose label or value
+- $k$ controls the smoothness of predictions
+- generally cheaper to run than other models
+- in higher dimensions, less useful
+
+## Questions?
+
 # Logistic regression
 
 ## Logistic regression
