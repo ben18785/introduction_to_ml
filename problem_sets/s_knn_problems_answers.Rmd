@@ -1,9 +1,9 @@
 ---
-title: "Supervised ML problems"
+title: "KNN regression"
 output: html_notebook
 ---
 
-# KNN regression
+In this example, we are going to write our own KNN regression model. We are going to assess it using simulated data.
 
 1. Generate $n=200$ paired $(x_i, y_i)$ data points by sampling:
 
@@ -36,73 +36,42 @@ ggplot(df %>% filter(type=="actual"), aes(x=x, y=y)) +
   geom_point()
 ```
 
-2. Write a function that returns the Euclidean distance of each point from each other point.
-
-Note: both R and Python have functions for calculating distance matrices:
-- R: `dist`
-- Python: `scipy.spatial.distance_matrix`
+2. Write a function that returns the Euclidean distance of a given $x$ test value from a vector of other $x$ values.
 
 ```{r}
-distance <- function(df) {
-  d <- as.matrix(dist(df[1:5, 1:2]))
-  diag(d) <- Inf
-  d
+f_eucl_dist <- function(x1, x2) {
+  sqrt(sum((x1 - x2)^2))
+}
+
+distance <- function(x_test, x_vector) {
+  dists <- vector(length=length(x_vector))
+  for(i in seq_along(dists))
+    dists[i] <- f_eucl_dist(x_vector[i], x_test)
+  dists
 }
 ```
 
-3. Write a function which returns the mean of the K-nearest neighbour points for all points (excluding itself of course). This is your KNN regression function.
+3. Write a function which takes as input a given $x$ test value and returns the indices which correspond to the k-nearest neighbours from a set of other $x$ values.
 ```{r}
-knn <- function(k, df) {
-  d <- distance(df)
-  
-  # Get indices of knn for each point
-  m_indices <- matrix(nrow = nrow(df),
-                      ncol = k)
-  for(i in 1:nrow(d)) {
-    low_to_high_indices <- order(d[i, ])
-    m_indices[i, ] <- low_to_high_indices[1:k]
-  }
-  
-  # Get KNN points for each point
-  x <- df[, 1:2]
-  v_means <- vector(length=nrow(df))
-  for(i in seq_along(v_means)) {
-    points <- x[m_indices[i, ], ]
-    v_means[i] <- colMeans(points)
-  }
-  v_means
+knn_indices <- function(k, x_test, x_vector) {
+  dists <- distance(x_test, x_vector)
+  low_to_high <- order(dists)[1:k]
+  low_to_high
 }
-
 ```
 
-
-2. Create a function which returns the KNNs for a given $x$ value (and $k$)
+4. Using your previous function, take the mean of the corresponding $y$ values of the KNN points for a given $x$ test value. This corresponds to a KNN regression function.
 ```{r}
-# use RANN library (which implements KD trees)
-x_tilde <- -2.5
-fit <- nn2(x, c(x_tilde), k = 10)
-idxs <- fit$nn.idx[1, ]
-
-# visualise nearest neighbours around a point
-tibble(x, y) %>% 
-  mutate(idx=seq_along(x)) %>% 
-  mutate(nn=idx%in%idxs) %>% 
-  ggplot(aes(x=x, y=y, colour=as.factor(nn))) +
-  geom_point()
+kk_regression <- function(k, x_test, x, y) {
+  indices <- knn_indices(k, x_test, x)
+  mean(y[indices])
+}
 ```
 
-3. Using your answer to the previous code, create a KNN regression estimator using Euclidean distance with various values of $k$ to predict $y$. How does $k$ influence the results?
+5. For a range of $x$ corresponding to the domain of your simulated data, use your KNN regression model to predict $y$ with $k=10$.
 ```{r}
-f_kk_regression <- function(x_tilde, x, y, k=10) {
-  fit <- nn2(x, c(x_tilde), k = k)
-  idxs <- fit$nn.idx[1, ]
-  return(mean(y[idxs]))
-}
-
 x_sim <- seq(-10, 10, 0.1)
-
-# k = 1
-y_sim <- map_dbl(x_sim, ~f_kk_regression(., x, y, k=10))
+y_sim <- map_dbl(x_sim, ~kk_regression(k=10, ., x, y))
 
 df <- tibble(x, y) %>% 
   mutate(type="actual") %>% 
@@ -111,9 +80,12 @@ df <- tibble(x, y) %>%
 ggplot(df %>% filter(type=="actual"), aes(x=x, y=y)) +
   geom_point() +
   geom_line(data=df %>% filter(type=="regression"), colour="blue")
+```
 
+6. Try the same thing with $k=1$ and $k=100$. How does choice of $k$ influence the results?
+```{r}
 # k = 1
-y_sim <- map_dbl(x_sim, ~f_kk_regression(., x, y, k=1))
+y_sim <- map_dbl(x_sim, ~kk_regression(k=1, ., x, y))
 
 df <- tibble(x, y) %>% 
   mutate(type="actual") %>% 
@@ -121,10 +93,11 @@ df <- tibble(x, y) %>%
 
 ggplot(df %>% filter(type=="actual"), aes(x=x, y=y)) +
   geom_point() +
-  geom_line(data=df %>% filter(type=="regression"), colour="blue")
+  geom_line(data=df %>% filter(type=="regression"), colour="blue") +
+  ggtitle("k = 1")
 
 # k = 100
-y_sim <- map_dbl(x_sim, ~f_kk_regression(., x, y, k=100))
+y_sim <- map_dbl(x_sim, ~kk_regression(k=100, ., x, y))
 
 df <- tibble(x, y) %>% 
   mutate(type="actual") %>% 
@@ -132,6 +105,7 @@ df <- tibble(x, y) %>%
 
 ggplot(df %>% filter(type=="actual"), aes(x=x, y=y)) +
   geom_point() +
-  geom_line(data=df %>% filter(type=="regression"), colour="blue")
+  geom_line(data=df %>% filter(type=="regression"), colour="blue") +
+  ggtitle("k = 100")
 ```
-
+It is evident that $k$ is a smoothing parameter: too small and the predictions likely overfit the data; too large and they underfit it.
