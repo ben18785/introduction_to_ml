@@ -1026,3 +1026,14 @@ meaning (say) $\beta_1$ represents the change in log-odds for a one unit change 
 - linear regression is a form of regression model
 - model with more parameters are likely to overfit more
 - logistic regression is a binary classifier
+
+## How to learn more?
+
+All available on SOLO:
+
+- "The hundred-page machine learning book", Burkov
+- "Hands-On machine learning with Scikit-Learn & Tensorflow", Geron
+
+Coursera:
+
+- Data Science: Statistics and Machine Learning Specialization, Johns Hopkins
