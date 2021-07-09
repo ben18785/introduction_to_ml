@@ -5,7 +5,12 @@ This course provides a short introduction to machine learning. It covers:
 - An introduction to unsupervised learning: dimensionality reduction via PCA; and clustering using k-means
 - An introduction to supervised learning: linear regression and logistic regression
 
-The course consists of a [lecture](https://htmlpreview.github.io/?https://raw.githubusercontent.com/ben18785/introduction_to_ml/main/presentations/intro_to_ml.html) and a number of problem sets. You are free to take whichever of the below seems most appealing to you:
+The course consists of a [lecture](https://htmlpreview.github.io/?https://raw.githubusercontent.com/ben18785/introduction_to_ml/main/presentations/intro_to_ml.html) and a number of problem sets.
+
+There is an introductory problem set which is recommended for all newbies to machine learning:
+- [using linear regression to predict house prices](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/s_applied_regression.nb.html). Here participants apply linear regression modelling and investigate how the model complexity affects its performance on training, validation and testing sets. The dataset used in the problem set is [here](./problem_sets/data/housing_short.csv). The answers to this exercise are written in R [here](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/answers/s_applied_regression.nb.html).
+
+The following problem sets invite participants to code up a few popular machine learning algorithms:
 
 - unsupervised learning:
   - [*Clustering via k-means*](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/s_clustering_problems.nb.html). Here, participants code up their own clustering algorithm using the k-means method, which they then apply to the famous [_Iris_](./problem_sets/data/iris.csv) dataset (see the [Wikipedia entry](https://en.wikipedia.org/wiki/Iris_flower_data_set) for a good description of it). The answers (written in R) to this problem set are [here](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/answers/s_clustering_problems_answers.nb.html).
