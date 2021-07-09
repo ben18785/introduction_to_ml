@@ -12,3 +12,15 @@ The course consists of a [lecture](https://htmlpreview.github.io/?https://raw.gi
 - supervised learning:
   - [*Linear regression*](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/s_linear_regression_problems.nb.html). Here, participants train their own linear regression model and investigate how the hyperparameters of gradient descent affect training efficiency. The answers to this problem set are [here](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/answers/s_linear_regression_problems_answers.nb.html).
   - [*K-nearest-neighbour regression*](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/s_knn_problems.nb.html). Here, participants code up their own KNN regression model. The answers to this problem set are [here](https://htmlpreview.github.io/?https://github.com/ben18785/introduction_to_ml/blob/main/problem_sets/answers/s_knn_problems_answers.nb.html).
+
+
+## How to learn more?
+
+All available on Oxford library SOLO:
+
+- "The hundred-page machine learning book", Burkov
+- "Hands-On machine learning with Scikit-Learn & Tensorflow", Geron
+
+Coursera:
+
+- [Data Science: Statistics and Machine Learning Specialization, Johns Hopkins](https://www.coursera.org/specializations/data-science-statistics-machine-learning)
