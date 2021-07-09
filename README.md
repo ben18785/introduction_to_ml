@@ -29,3 +29,23 @@ All available on Oxford library SOLO:
 Coursera:
 
 - [Data Science: Statistics and Machine Learning Specialization, Johns Hopkins](https://www.coursera.org/specializations/data-science-statistics-machine-learning)
+
+## Notes to self for next time I deliver
+
+Reduce the material:
+
+- include levels 1-2 for the "what is ML?" section
+- focus only on supervised ML using linear regression and logistic regression
+
+When I gave this course, I actually deviated from the lecture and drew on the screen using Jamboard. In this I had a series of examples:
+
+linear regression:
+- house price vs size; how to build a linear model for this; what do the parameters of the linear model mean
+- how do we choose the parameters of the linear model? start off with least-squares loss
+- how does changing the loss function (e.g. absolute vs 4th power vs square) affect the estimates?
+- how do we actually estimate those parameters? For least squares we can estimate the parameters exactly (I don't show this); for other cases, it's generally better to use gradient descent
+- explain gradient descent using a 1d graph of the loss function for one of the parameters; talk through why dL/dtheta <0 means that we step in the right direction
+- talk about how we can make the model more complex by adding a quadratic term to the regression and show how this results in a curvy line that (may) better fit the data; explain that we can estimate this model via gradient descent
+- model complexity: show underfit, fit and overfit models achieved by whatever cap we have on the number of polynomial terms
+- training (~70%) / validation (~30%) split: explain that we choose a model of appropriate complexity by training on one set and testing on the validation; as part of this, I plot the loss vs model complexity for both the training and validation sets
+- testing set: to avoid overfitting to the training set, we create another set ("testing" ~10%)
