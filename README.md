@@ -49,3 +49,16 @@ linear regression:
 - model complexity: show underfit, fit and overfit models achieved by whatever cap we have on the number of polynomial terms
 - training (~70%) / validation (~30%) split: explain that we choose a model of appropriate complexity by training on one set and testing on the validation; as part of this, I plot the loss vs model complexity for both the training and validation sets
 - testing set: to avoid overfitting to the training set, we create another set ("testing" ~10%)
+
+logistic regression:
+- explain that it's a classifier
+- lung cancer vs smoking example: plot lung cancer presence / absence vs number of cigarettes smoked; just some raw data
+- explain how we can think about this presence or absence as like flipping a coin
+- overlay a logistic-type on top of the data; explain how it's like flipping a coin with different biases according to the number of cigarettes smoked
+- show the logistic equation and explain its shape
+- ask the question: how do we estimate its parameters?
+- back to coin flipping: write down and explain the Bernoulli distribution
+- show that for two coin flips -- one heads, one tails -- how we could estimate the value of theta? Show this graphically as peaking at theta=0.5 (can also show by differentiation afterwards)
+- now write down the likelihood for the logistic glm and explain that we estimate it using gradient descent; as we do for linear regression
+- explain interpretation of logistic regression as a log odds of lung cancer
+- show how we can increase model complexity by including a quadratic term and say that all the same things about overfitting etc still apply to logistic regression 
